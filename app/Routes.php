@@ -132,14 +132,3 @@ Route::get('admin(/dashboard)', array(
 
 // Route::catchAll('App\Controllers\Pages@fetch');
 Route::any('{slug}', 'App\Controllers\Pages@fetch')->where('slug', '(.*)');
-
-/** Define static routes. */
-
-// The default Routing
-Route::get('/',       'App\Controllers\Welcome@index');
-Route::get('subpage', 'App\Controllers\Welcome@subPage');
-
-// A catch-all Route - will match any URI, while using any HTTP Method.
-//Route::any('{slug}', 'App\Controllers\Demo@catchAll')->where('slug', '(.*)');
-
-/** End default Routes */
