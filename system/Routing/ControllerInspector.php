@@ -18,6 +18,25 @@ class ControllerInspector
     protected $verbs = array('any', 'get', 'post', 'put', 'patch', 'delete', 'head', 'options');
 
     /**
+     * Boolean indicating the use of Named Parameters on not.
+     *
+     * @var bool $namedParams
+     */
+    protected $namedParams = true;
+
+
+    /**
+     * ControllerInspector constructor.
+     *
+     * @param bool $namedParams Wheter or not are used the Named Parameters
+     * @codeCoverageIgnore
+     */
+    public function __construct($namedParams = true)
+    {
+        $this->namedParams = $namedParams;
+    }
+
+    /**
      * Get the routable methods for a controller.
      *
      * @param  string  $controller
@@ -57,11 +76,16 @@ class ControllerInspector
      */
     public function isRoutable(ReflectionMethod $method)
     {
-        $className = $method->class;
+        switch ($method->class) {
+            case 'Routing\Controller':
+            case 'Core\Controller':
+                return false;
 
-        if (($className == 'Routing\Controller') || ($className == 'Core\Controller')) return false;
+            default:
+                return str_starts_with($method->name, $this->verbs);
+        }
 
-        return str_starts_with($method->name, $this->verbs);
+        return false;
     }
 
     /**
@@ -123,6 +147,10 @@ class ControllerInspector
      */
     public function addUriWildcards($uri)
     {
+        if ($this->namedParams) {
+            return $uri .'/{one?}/{two?}/{three?}/{four?}/{five?}/{six?}/{seven?}';
+        }
+
         return $uri .'(/(:any)(/(:any)(/(:any)(/(:any)(/(:any)(/(:any)(/(:any))))))))';
     }
 

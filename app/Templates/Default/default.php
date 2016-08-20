@@ -25,14 +25,58 @@ echo $css; // Place to pass data / plugable hook zone
         <img src='<?= template_url('images/nova.png', 'Default'); ?>' alt='<?= Config::get('app.name', SITETITLE); ?>'>
     </p>
 
-    <?= $content; ?>
+    <p><?=GlobalBlocks::get('Phone Number', 'input');?>
+
+    <div class='row'>
+
+        <div class='col-md-2'>
+            <?php
+            if (isset($leftSidebars)) {
+                foreach ($leftSidebars as $row) {
+                    echo "<div class='widget $row->class'>"; 
+                        echo "<div class='widgetTitle'>$row->title</div>"; 
+                        echo "<div class='widgetBody'>$row->content</div>"; 
+                    echo "</div>";
+                }
+            }
+            ?>
+        </div>
+
+        <div class='col-md-8'>
+            <?=$content;?>
+            <?php
+            if (isset($pageID)) {
+                echo PageBlocks::get($pageID, 'Sample Block', 'textarea');
+                echo PageBlocks::get($pageID, 'Social Media Info', 'textarea');
+            }
+            ?>
+        </div>
+
+        <div class='col-md-2'>
+            <?php
+            if (isset($rightSidebars)) {
+                foreach ($rightSidebars as $row) {
+                    echo "<div class='widget $row->class'>"; 
+                        echo "<div class='widgetTitle'>$row->title</div>"; 
+                        echo "<div class='widgetBody'>$row->content</div>"; 
+                    echo "</div>";
+                }
+            }
+            ?>
+        </div>
+
+    
+
 </div>
 
 <footer class="footer">
     <div class="container-fluid">
         <div class="row" style="margin: 15px 0 0;">
             <div class="col-lg-4">
-                <p class="text-muted">Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= VERSION; ?></b></a></p>
+                <p class="text-muted">Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= VERSION; ?></b></a>
+
+                <?=GlobalBlocks::get('Footer', 'input');?>
+                </p>
             </div>
             <div class="col-lg-8">
                 <p class="text-muted pull-right">

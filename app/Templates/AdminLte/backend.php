@@ -151,6 +151,14 @@ $user = Auth::user();
                 <a href="<?= site_url('admin/pages'); ?>"><i class="fa fa-book"></i> <span><?= __d('admin_lte', 'Pages'); ?></span></a>
             </li>
 
+            <li <?php if ($baseUri == 'admin/globalblocks') { echo "class='active'"; } ?>>
+                <a href="<?= site_url('admin/globalblocks'); ?>"><i class="fa fa-cubes"></i> <span><?= __d('admin_lte', 'Global Blocks'); ?></span></a>
+            </li>
+
+            <li <?php if ($baseUri == 'admin/sidebars') { echo "class='active'"; } ?>>
+                <a href="<?= site_url('admin/sidebars'); ?>"><i class="fa fa-cubes"></i> <span><?= __d('admin_lte', 'Sidebars'); ?></span></a>
+            </li>
+
             <li <?php if ($baseUri == 'admin/settings') { echo "class='active'"; } ?>>
                 <a href="<?= site_url('admin/settings'); ?>"><i class="fa fa-gears"></i> <span><?= __d('admin_lte', 'Settings'); ?></span></a>
             </li>

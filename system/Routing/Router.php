@@ -112,6 +112,14 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
     public static $methods = array('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS');
 
     /**
+     * Boolean indicating the use of Named Parameters on not.
+     *
+     * @var bool $namedParams
+     */
+    protected $namedParams = true;
+
+
+    /**
      * Router constructor.
      *
      * @codeCoverageIgnore
@@ -123,6 +131,11 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
         $this->routes = new RouteCollection();
 
         $this->container = $container ?: new Container();
+
+        // Wheter or not are used the Named Parameters.
+        if ('unnamed' == Config::get('routing.parameters', 'named')) {
+            $this->namedParams = false;
+        }
     }
 
     /**
@@ -240,41 +253,6 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
     }
 
     /**
-     * Register catchAll route.
-     *
-     * @param $callback
-     */
-    public function catchAll($action)
-    {
-        $methods = array('GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE');
-
-        return $this->addRoute($methods, '(:all)', $action);
-    }
-
-    /**
-     * Register many request URIs to a single Callback.
-     *
-     * <code>
-     *      // Register a group of URIs for a Callback
-     *      Router::share(array(array('GET', '/'), array('POST', '/home')), 'App\Controllers\Home@index');
-     * </code>
-     *
-     * @param  array  $routes
-     * @param  mixed  $callback
-     * @return void
-     */
-    public function share($routes, $callback)
-    {
-        foreach ($routes as $entry) {
-            $method = array_shift($entry);
-            $route  = array_shift($entry);
-
-            // Register the route.
-            $this->addRoute($method, $route, $callback);
-        }
-    }
-
-    /**
      * Defines a Route Group.
      *
      * @param string $group The scope of the current Routes Group
@@ -282,9 +260,7 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
      */
     public function group($group, $callback)
     {
-        if (! is_array($group)) {
-            $group = array('prefix' => $group);
-        }
+        if (is_string($group)) $group = array('prefix' => $group);
 
         // Add the Route Group to the array.
         array_push($this->groupStack, $group);
@@ -318,13 +294,16 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
      */
     public function resource($basePath, $controller)
     {
-        $this->addRoute('GET',                 $basePath,                 $controller .'@index');
-        $this->addRoute('GET',                 $basePath .'/create',      $controller .'@create');
-        $this->addRoute('POST',                $basePath,                 $controller .'@store');
-        $this->addRoute('GET',                 $basePath .'/(:any)',      $controller .'@show');
-        $this->addRoute('GET',                 $basePath .'/(:any)/edit', $controller .'@edit');
-        $this->addRoute(array('PUT', 'PATCH'), $basePath .'/(:any)',      $controller .'@update');
-        $this->addRoute('DELETE',              $basePath .'/(:any)',      $controller .'@delete');
+        $param = $this->namedParams ? '{id}' : '(:any)';
+
+        //
+        $this->addRoute('GET',                 $basePath,                       $controller .'@index');
+        $this->addRoute('GET',                 $basePath .'/create',            $controller .'@create');
+        $this->addRoute('POST',                $basePath,                       $controller .'@store');
+        $this->addRoute('GET',                 $basePath .'/' .$param,          $controller .'@show');
+        $this->addRoute('GET',                 $basePath .'/' .$param .'/edit', $controller .'@edit');
+        $this->addRoute(array('PUT', 'PATCH'), $basePath .'/' .$param,          $controller .'@update');
+        $this->addRoute('DELETE',              $basePath .'/' .$param,          $controller .'@delete');
     }
 
     /**
@@ -369,7 +348,25 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
             }
         }
 
-        $this->addRoute('ANY', $uri .'/(:all)', $controller .'@missingMethod');
+        $this->addFallthroughRoute($controller, $uri);
+    }
+
+    /**
+     * Add a fallthrough route for a controller.
+     *
+     * @param  string  $controller
+     * @param  string  $uri
+     * @return void
+     */
+    protected function addFallthroughRoute($controller, $uri)
+    {
+        if ($this->namedParams) {
+            $route = $this->any($uri .'/{_missing}', $controller .'@missingMethod');
+
+            $route->where('_missing', '(.*)');
+        } else {
+            $this->any($uri .'/(:all)', $controller .'@missingMethod');
+        }
     }
 
     /**
@@ -398,12 +395,10 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
      */
     protected function createRoute($methods, $route, $action)
     {
-        // Prepare the Route PATTERN.
-        $pattern = ltrim($route, '/');
-
-        // Pre-process the Action information.
+        // Pre-process the Action data.
         if (! is_array($action)) $action = array('uses' => $action);
 
+        // Adjust the Prefix according with the Groups stack.
         if (! empty($this->groupStack)) {
             $parts = array();
 
@@ -412,7 +407,11 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
                 array_push($parts, trim($group['prefix'], '/'));
             }
 
-            // Adjust the Route PATTERN, if it is needed.
+            if (isset($action['prefix'])) {
+                array_push($parts, trim($action['prefix'], '/'));
+            }
+
+            // Adjust the Route PREFIX, if it is needed.
             $parts = array_filter($parts, function($value)
             {
                 return ! empty($value);
@@ -427,8 +426,8 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
             $action = $this->getControllerAction($action);
         }
 
-        // Create a Route instance.
-        return $this->newRoute($methods, $pattern, $action);
+        // Create a Route instance and return it.
+        return $this->newRoute($methods, $route, $action);
     }
 
     /**
@@ -441,7 +440,7 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
      */
     protected function newRoute($methods, $uri, $action)
     {
-        return new Route($methods, $uri, $action);
+        return new Route($methods, $uri, $action, $this->namedParams);
     }
 
     /**
@@ -805,7 +804,7 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
      */
     public function getInspector()
     {
-        return $this->inspector ?: $this->inspector = new ControllerInspector();
+        return $this->inspector ?: $this->inspector = new ControllerInspector($this->namedParams);
     }
 
     /**

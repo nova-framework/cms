@@ -1,30 +1,41 @@
 <?php
 /**
- * View - load template pages
+ * View
  *
- * @author David Carr - dave@novaframework.com
  * @author Virgil-Adrian Teaca - virgil@giulianaeassociati.com
- * @version 3.0
+ * @version 4.0
  */
 
-namespace Core;
+namespace View;
 
-use Response;
-use Core\View;
-use Helpers\Inflector;
+use Support\Contracts\ArrayableInterface as Arrayable;
+use Support\Contracts\RenderableInterface as Renderable;
+use Support\MessageBag;
+use View\Engines\EngineInterface;
+use View\Factory;
 
 use ArrayAccess;
+use Exception;
 
 
 /**
  * View class to load template and views files.
  */
-abstract class BaseView implements ArrayAccess
+class View implements ArrayAccess, Renderable
 {
     /**
-     * @var array Array of shared data
+     * The View Factory instance.
+     *
+     * @var \View\Factory
      */
-    protected static $shared = array();
+    protected $factory;
+
+    /**
+     * The View Engine instance.
+     *
+     * @var \View\Engines\EngineInterface
+     */
+    protected $engine;
 
     /**
      * @var string The given View name.
@@ -42,15 +53,43 @@ abstract class BaseView implements ArrayAccess
     protected $data = array();
 
     /**
+     * @var bool Falg marking the View as Template.
+     */
+    protected $layout = false;
+
+
+    /**
      * Constructor
      * @param mixed $path
      * @param array $data
      */
-    protected function __construct($view, $path, array $data = array())
+    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = array(), $layout = false)
     {
+        $this->factory = $factory;
+        $this->engine  = $engine;
+
+        //
         $this->view = $view;
         $this->path = $path;
-        $this->data = $data;
+
+        $this->data = ($data instanceof Arrayable) ? $data->toArray() : (array) $data;
+
+        $this->layout = $layout;
+    }
+
+    /**
+     * Get the string contents of the View.
+     *
+     * @param  \Closure  $callback
+     * @return string
+     */
+    public function render(Closure $callback = null)
+    {
+        $contents = $this->renderContents();
+
+        $response = isset($callback) ? $callback($this, $contents) : null;
+
+        return $response ?: $contents;
     }
 
     /**
@@ -58,69 +97,9 @@ abstract class BaseView implements ArrayAccess
      *
      * @return string
      */
-    protected function fetch()
+    public function renderContents()
     {
-        ob_start();
-
-        $this->render();
-
-        return ob_get_clean();
-    }
-
-    /**
-     * Render the View and output the result.
-     *
-     * @return void
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function render()
-    {
-        if (! is_readable($this->path)) {
-            throw new \InvalidArgumentException("Unable to load the view '" .$this->view ."'. File '" .$this->path."' not found.", 1);
-        }
-
-        // Get a local copy of the prepared data.
-        $data = $this->data();
-
-        // Extract the rendering variables from the local data copy.
-        foreach ($data as $variable => $value) {
-            ${$variable} = $value;
-        }
-
-        require $this->path;
-    }
-
-    /**
-     * Render the View and display the result.
-     *
-     * @return void
-     */
-    public function display()
-    {
-        Response::sendHeaders();
-
-        $this->render();
-    }
-
-    /**
-     * Return all variables stored on local data.
-     *
-     * @return array
-     */
-    public function localData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Return all variables stored on shared data.
-     *
-     * @return array
-     */
-    public static function sharedData()
-    {
-        return static::$shared;
+        return $this->engine->render($this->path, $this->gatherData());
     }
 
     /**
@@ -128,36 +107,18 @@ abstract class BaseView implements ArrayAccess
      *
      * @return array
      */
-    public function data()
+    public function gatherData()
     {
-        // Get a local array of Data.
-        $data =& $this->data;
-
-        // Get a local copy of the shared Data.
-        $shared = static::$shared;
+        $data = array_merge($this->factory->getShared(), $this->data);
 
         // All nested Views are evaluated before the main View.
         foreach ($data as $key => $value) {
-            if ($value instanceof View) {
-                $data[$key] = $value->fetch();
+            if ($value instanceof Renderable) {
+                $data[$key] = $value->render();
             }
         }
 
-        // Merge the local and shared data using two steps.
-        foreach (array('afterBody', 'css', 'js') as $key) {
-            $value = isset($data[$key]) ? $data[$key] : '';
-
-            if (isset($shared[$key])) {
-                $value .= $shared[$key];
-            }
-
-            $data[$key] = $value;
-
-            // Remove that key from shared data.
-            unset($shared[$key]);
-        }
-
-        return empty($shared) ? $data : array_merge($data, $shared);
+        return $data;
     }
 
     /**
@@ -184,7 +145,7 @@ abstract class BaseView implements ArrayAccess
             $data = $this->data;
         }
 
-        return $this->with($key, View::make($view, $data, $module));
+        return $this->with($key, $this->factory->make($view, $data, $module));
     }
 
     /**
@@ -208,6 +169,23 @@ abstract class BaseView implements ArrayAccess
     }
 
     /**
+     * Add validation errors to the view.
+     *
+     * @param  \Nova\Support\Contracts\MessageProviderInterface|array  $provider
+     * @return \Nova\View\View
+     */
+    public function withErrors($provider)
+    {
+        if ($provider instanceof MessageProviderInterface) {
+            $this->with('errors', $provider->getMessageBag());
+        } else {
+            $this->with('errors', new MessageBag((array) $provider));
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a key / value pair to the shared view data.
      *
      * Shared view data is accessible to every view created by the application.
@@ -218,44 +196,70 @@ abstract class BaseView implements ArrayAccess
      */
     public function shares($key, $value)
     {
-        static::share($key, $value);
+        $this->factory->share($key, $value);
 
         return $this;
     }
 
     /**
-     * Add a key / value pair to the shared View data.
+     * Get the View Factory instance.
      *
-     * Shared View data is accessible to every View created by the application.
-     *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @return void
+     * @return \Nova\View\Factory
      */
-    public static function share($key, $value)
+    public function getFactory()
     {
-        static::$shared[$key] = $value;
+        return $this->factory;
     }
 
     /**
-     * Process the given parameters.
+     * Return true if the current View instance is a Layout.
      *
-     * @param mixed $data
-     * @param mixed $custom
+     * @return bool
+     */
+    public function isLayout()
+    {
+        return $this->layout;
+    }
+
+    /**
+     * Get the name of the view.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->view;
+    }
+
+    /**
+     * Get the array of view data.
+     *
      * @return array
      */
-    protected static function parseParams($data, $custom = null)
+    public function getData()
     {
-        if (is_string($data)) {
-            if (! empty($data) && is_null($custom)) {
-                // The custom given as second parameter; adjust the information.
-                $custom = $data;
-            }
+        return $this->data;
+    }
 
-            $data = array();
-        }
+    /**
+     * Get the path to the view file.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
 
-        return array($data, $custom);
+    /**
+     * Set the path to the view.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
     }
 
     /**
@@ -315,40 +319,16 @@ abstract class BaseView implements ArrayAccess
     }
 
     /**
-     * Get the evaluated string content of the View.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return $this->fetch();
-        } catch (\Exception $e) {
-            return '';
-        }
-    }
-
-     /**
      * Magic Method for handling dynamic functions.
      *
      * @param  string  $method
      * @param  array   $params
-     * @return \Core\BaseView|static|void
+     * @return \Nova\View\View|static|void
      *
      * @throws \BadMethodCallException
      */
     public function __call($method, $params)
     {
-        // The 'fetch' and 'render' Methods are protected; expose them.
-        switch ($method) {
-            case 'fetch':
-            case 'render':
-                return call_user_func_array(array($this, $method), $params);
-
-            default:
-                break;
-        }
-
         // Add the support for the dynamic withX Methods.
         if (str_starts_with($method, 'with')) {
             $name = lcfirst(substr($method, 4));
@@ -358,4 +338,20 @@ abstract class BaseView implements ArrayAccess
 
         throw new \BadMethodCallException("Method [$method] does not exist on " .get_class($this));
     }
+
+
+    /**
+     * Get the evaluated string content of the View.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
 }

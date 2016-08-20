@@ -5,6 +5,7 @@ use Core\Controller;
 use Core\View;
 use Request;
 use App\Models\Page;
+use App\Models\Sidebar;
 
 class Pages extends Controller {
 
@@ -31,10 +32,18 @@ class Pages extends Controller {
 	    }
 
 	    $this->layout = $page->layout;
+	    $ids = explode(',', $page->sidebars);
+
+	    $leftSidebars = Sidebar::whereIn('id', $ids)->where('position', 'LIKE', '%Left%')->get();
+	    $rightSidebars = Sidebar::whereIn('id', $ids)->where('position', 'LIKE', '%Right%')->get();
 
 	    return View::make('Default')
 	    ->shares('title', $page->pageTitle)
 	    ->shares('browserTitle', $page->browserTitle)
+	    ->shares('leftSidebars', $leftSidebars)
+	    ->shares('rightSidebars', $rightSidebars)
+	    ->shares('pageID', $page->id)
 	    ->withContent($page->content);
+
 	}
 }

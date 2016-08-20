@@ -8,8 +8,8 @@
 
 namespace Routing;
 
-use Core\Config;
 use Http\Request;
+use Routing\RouteCompiler;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,63 +20,190 @@ use Symfony\Component\HttpFoundation\Response;
 class Route
 {
     /**
-     * @var array Supported HTTP methods
-     */
-    private $methods = array();
-
-    /**
-     * @var string URL pattern
-     */
-    private $pattern = null;
-
-    /**
-     * @var array The route action array.
-     */
-    protected $action = array();
-
-    /**
-     * @var string The current matched URI
+     * The URI pattern the Route responds to.
+     *
+     * @var string
      */
     private $uri = null;
 
     /**
-     * @var string The matched HTTP method
+     * Supported HTTP methods.
+     *
+     * @var array
      */
-    private $method = null;
+    private $methods = array();
 
     /**
-     * @var array The matched Route parameters
+     * The route action array.
+     *
+     * @var array
      */
-    private $parameters = array();
+    protected $action = array();
 
     /**
-     * @var string Matching regular expression
+     * The regular expression requirements.
+     *
+     * @var array
+     */
+    protected $wheres = array();
+
+    /**
+     * The route compiler instance.
+     *
+     * @var \Routing\RouteCompiler
+     */
+    protected $compiler;
+
+    /**
+     * The matched Route parameters.
+     *
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * The parameter names for the route.
+     *
+     * @var array|null
+     */
+    protected $parameterNames;
+
+    /**
+     * The compiled regex the Route responds to.
+     *
+     * @var string
      */
     private $regex;
 
     /**
+     * Boolean indicating the use of Named Parameters on not.
+     *
+     * @var bool $namedParams
+     */
+    private $namedParams = true;
+
+
+    /**
      * Constructor.
      *
-     * @param string|array $method HTTP method(s)
-     * @param string $pattern URL pattern
+     * @param string|array $methods HTTP methods
+     * @param string $uri URL pattern
      * @param string|array|callable $action Callback function or options
+     * @param bool $namedParams Wheter or not are used the Named Parameters
      */
-    public function __construct($method, $pattern, $action)
+    public function __construct($methods, $uri, $action, $namedParams = true)
     {
-        $this->methods = array_map('strtoupper', is_array($method) ? $method : array($method));
+        $uri = trim($uri, '/');
+
+        //
+        $this->uri = ! empty($uri) ? $uri : '/';
+
+        $this->methods = (array) $methods;
+
+        $this->action = $this->parseAction($action);
 
         if (in_array('GET', $this->methods) && ! in_array('HEAD', $this->methods)) {
             $this->methods[] = 'HEAD';
         }
 
-        //
-        $this->pattern = ! empty($pattern) ? $pattern : '/';
-
-        $this->action = $this->parseAction($action);
-
         if (isset($this->action['prefix'])) {
             $this->prefix($this->action['prefix']);
         }
+
+        //
+        $this->namedParams = $namedParams;
+    }
+
+    /**
+     * Run the Route action and return the response.
+     *
+     * @return mixed
+     */
+    public function run()
+    {
+        $parameters = array_filter($this->getParams(), function($param)
+        {
+            return isset($param);
+        });
+
+        return call_user_func_array($this->action['uses'], $parameters);
+    }
+
+    /**
+     * Checks if a Request matches the Route pattern.
+     *
+     * @param \Http\Request $request The dispatched Request instance
+     * @param bool $includingMethod Wheter or not is matched the HTTP Method
+     * @return bool Match status
+     * @internal param string $pattern URL pattern
+     */
+    public function matches(Request $request, $includingMethod = true)
+    {
+        // Attempt to match the Route Method if it is requested.
+        if ($includingMethod && ! in_array($request->method(), $this->methods)) {
+            return false;
+        }
+
+        // Compile and retrieve the Route regex for matching.
+        $regex = $this->compileRoute();
+
+        // Attempt to match the Request URI to the Route regex.
+        if (preg_match($regex, $request->path(), $matches) === 1) {
+            $params = array();
+
+            // Walk over matches, looking for named parameters need to be stored.
+            foreach ($matches as $key => $value) {
+                if (! is_string($key)) {
+                    continue;
+                }
+
+                // A named parameter found.
+                $params[$key] = $value;
+            }
+
+            // Store the Route parameters, also marking this Route as bound.
+            $this->parameters = $params;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Compile the Route pattern for matching and return it.
+     *
+     * @return string
+     */
+    public function compileRoute()
+    {
+        $compiler = $this->getCompiler();
+
+        if ($this->namedParams) {
+            // We are using the Named Parameters on Route compilation.
+            $optionals = $this->extractOptionalParameters();
+
+            $uri = preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri);
+
+            $this->regex = $compiler->compileRoute($uri, $optionals);
+        } else {
+            // We are using the Unnamed Parameters on Route compilation.
+            $this->regex = $compiler->compileLegacyRoute($this->uri);
+        }
+
+        return $this->regex;
+    }
+
+    /**
+     * Get the optional parameters for the route.
+     *
+     * @return array
+     */
+    protected function extractOptionalParameters()
+    {
+        preg_match_all('/\{(\w+?)\?\}/', $this->uri, $matches);
+
+        return isset($matches[1]) ? $matches[1] : array();
     }
 
     /**
@@ -87,8 +214,8 @@ class Route
      */
     protected function parseAction($action)
     {
-        if (is_string($action) || is_callable($action)) {
-            // A string or Closure is given as Action.
+        if (is_null($action) || is_string($action) || is_callable($action)) {
+            // A null, string or Closure is given as Action.
             return array('uses' => $action);
         } else if (! isset($action['uses'])) {
             // Find the Closure in the Action array.
@@ -153,30 +280,13 @@ class Route
     }
 
     /**
-     * Get the Filters for the current Route instance.
-     *
-     * @return array
-     */
-    public function getFilters()
-    {
-        if (! isset($this->action['filters'])) {
-            return array();
-        }
-
-        // Parse and return the Filters.
-        $filters = $this->action['filters'];
-
-        return $this->parseFilters($filters);
-    }
-
-    /**
      * Get the "before" filters for the route.
      *
      * @return array
      */
     public function beforeFilters()
     {
-        if ( ! isset($this->action['before'])) return array();
+        if (! isset($this->action['before'])) return array();
 
         //
         $filters = $this->action['before'];
@@ -191,7 +301,7 @@ class Route
      */
     public function afterFilters()
     {
-        if ( ! isset($this->action['after'])) return array();
+        if (! isset($this->action['after'])) return array();
 
         //
         $filters = $this->action['after'];
@@ -274,118 +384,54 @@ class Route
     }
 
     /**
-     * Run the Route action and return the response.
+     * Get a given parameter from the route.
      *
-     * @return mixed
+     * @param  string  $name
+     * @param  mixed   $default
+     * @return string
      */
-    public function run()
+    public function getParameter($name, $default = null)
     {
-        $parameters = array_filter($this->getParams(), function($p) { return isset($p); });
-
-        return call_user_func_array($this->action['uses'], $parameters);
+        return $this->parameter($name, $default);
     }
 
     /**
-     * Checks if a Request matches the Route pattern.
+     * Get a given parameter from the route.
      *
-     * @param \Http\Request $request The dispatched Request instance
-     * @param bool $includingMethod Wheter or not is matched the HTTP Method
-     * @return bool Match status
-     * @internal param string $pattern URL pattern
+     * @param  string  $name
+     * @param  mixed   $default
+     * @return string
      */
-    public function matches(Request $request, $includingMethod = true)
+    public function parameter($name, $default = null)
     {
-        $method = $request->method();
-
-        if ($includingMethod && ! in_array($method, $this->methods)) {
-            return false;
-        }
-
-        $uri = $request->path();
-
-        //
-        // Build the regex for matching.
-        $namedParams = false;
-
-        if (preg_match('#\{([^\}]+)\}#', $this->pattern) === 1) {
-            // We have Named Parameters.
-            $regex = static::compileRoute($this->pattern);
-
-            $namedParams = true;
-        } else {
-            $searches = array(':any', ':num', ':all');
-            $replaces = array('[^/]+', '[0-9]+', '.*');
-
-            // Retrieve the additional Routing Patterns from configuration.
-            $patterns = Config::get('routing.patterns', array());
-
-            if(! empty($patterns)) {
-                $searches = array_merge($searches, array_keys($patterns));
-                $replaces = array_merge($replaces, array_values($patterns));
-            }
-
-            // Prepare the pattern with replacements.
-            $regex = str_replace($searches, $replaces, $this->pattern);
-
-            if (strpos($regex, '(/') !== false) {
-                $regex = str_replace(array('(/', ')'), array('(?:/', ')?'), $regex);
-            }
-        }
-
-        // Attempt to match the Route and extract the parameters.
-        if (preg_match('#^' .$regex .'(?:\?.*)?$#i', $uri, $matches)) {
-            $params = array_filter($matches, function($key) use ($namedParams)
-            {
-                return $namedParams ? is_string($key) : ($key > 0);
-            }, ARRAY_FILTER_USE_KEY);
-
-            // Store the current information.
-            $this->uri        = $uri;
-            $this->method     = $method;
-            $this->parameters = $params;
-            $this->regex      = $regex;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    protected static function compileRoute($pattern)
-    {
-        // Convert the Named Patterns, e.g. {controller}
-        $regex = preg_replace('#\{(\w+)\}#', '(?P<\1>[^/]+)', $pattern);
-
-        // Convert the optional Named Patterns, e.g. /{category?}
-        $regex = preg_replace('#/\{(\w+)\?\}#', '(?:/(?P<\1>[^/]+)', $regex, -1, $count);
-
-        // Convert the optional Named Patterns with custom regular expression e.g. {id:\d+:?}
-        $regex = preg_replace('#/\{(\w+):([^\}]+):\?\}#', '(?:/(?P<\1>\2)', $regex, -1, $count2);
-
-        $count += $count2;
-
-        // Convert the Named Patterns with custom regular expression e.g. {id:\d+}
-        $regex = preg_replace('#\{(\w+):([^\}]+)\}#', '(?P<\1>\2)', $regex);
-
-        // Pad the pattern with ')?' if is need.
-        if($count > 0) {
-            $regex .= str_repeat (')?', $count);
-        }
-
-        return $regex;
+        return array_get($this->parameters(), $name, $default);
     }
 
     /**
-     * Add a prefix to the route URI.
+     * Set a parameter to the given value.
      *
-     * @param  string  $prefix
-     * @return \Routing\Route
+     * @param  string  $name
+     * @param  mixed   $value
+     * @return void
      */
-    public function prefix($prefix)
+    public function setParameter($name, $value)
     {
-        $this->pattern = trim($prefix, '/') .'/' .trim($this->pattern, '/');
+        $this->parameters();
 
-        return $this;
+        $this->parameters[$name] = $value;
+    }
+
+    /**
+     * Unset a parameter on the route if it is set.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    public function forgetParameter($name)
+    {
+        $this->parameters();
+
+        unset($this->parameters[$name]);
     }
 
     /**
@@ -397,10 +443,14 @@ class Route
      */
     public function parameters()
     {
-        return array_map(function($value)
-        {
-            return is_string($value) ? rawurldecode($value) : $value;
-        }, $this->parameters);
+        if (isset($this->parameters)) {
+            return array_map(function($value)
+            {
+                return is_string($value) ? rawurldecode($value) : $value;
+            }, $this->parameters);
+        }
+
+        throw new \LogicException("Route is not bound.");
     }
 
     /**
@@ -416,7 +466,122 @@ class Route
         });
     }
 
-    // Some Getters
+    /**
+     * Get all of the parameter names for the route.
+     *
+     * @return array
+     */
+    public function parameterNames()
+    {
+        if (isset($this->parameterNames)) {
+            return $this->parameterNames;
+        }
+
+        return $this->parameterNames = $this->compileParameterNames();
+    }
+
+    /**
+     * Get the parameter names for the route.
+     *
+     * @return array
+     */
+    protected function compileParameterNames()
+    {
+        preg_match_all('/\{(.*?)\}/', $this->uri, $matches);
+
+        return array_map(function($value)
+        {
+            return trim($value, '?');
+        }, $matches[1]);
+    }
+
+    /**
+     * Set a regular expression requirement on the route.
+     *
+     * @param  array|string  $name
+     * @param  string  $expression
+     * @return $this
+     */
+    public function where($name, $expression = null)
+    {
+        foreach ($this->parseWhere($name, $expression) as $name => $expression) {
+            $this->wheres[$name] = $expression;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Parse arguments to the where method into an array.
+     *
+     * @param  array|string  $name
+     * @param  string  $expression
+     * @return array
+     */
+    protected function parseWhere($name, $expression)
+    {
+        return is_array($name) ? $name : array($name => $expression);
+    }
+
+    /**
+     * Set a list of regular expression requirements on the route.
+     *
+     * @param  array  $wheres
+     * @return $this
+     */
+    protected function whereArray(array $wheres)
+    {
+        foreach ($wheres as $name => $expression) {
+            $this->where($name, $expression);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a prefix to the route URI.
+     *
+     * @param  string  $prefix
+     * @return \Routing\Route
+     */
+    public function prefix($prefix)
+    {
+        $uri = trim(trim($prefix, '/') .'/' .trim($this->uri, '/'), '/');
+
+        $this->uri = ! empty($uri) ? $uri : '/';
+
+        return $this;
+    }
+
+    /**
+     * Get a Route Compiler instance.
+     *
+     * @return \Routing\RouteCompiler
+     */
+    public function getCompiler()
+    {
+        return $this->compiler ?: $this->compiler = new RouteCompiler($this->wheres);
+    }
+
+    /**
+     * Get the URI associated with the route.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->uri();
+    }
+
+    /**
+     * Get the URI associated with the route.
+     *
+     * @return string
+     */
+    public function uri()
+    {
+        return $this->uri;
+    }
 
     /**
      * @return array
@@ -435,19 +600,43 @@ class Route
     }
 
     /**
-     * @return string
+     * Determine if the route only responds to HTTP requests.
+     *
+     * @return bool
      */
-    public function getPattern()
+    public function httpOnly()
     {
-        return $this->pattern;
+        return in_array('http', $this->action, true);
     }
 
     /**
-     * @return string
+     * Determine if the route only responds to HTTPS requests.
+     *
+     * @return bool
      */
-    public function pattern()
+    public function httpsOnly()
     {
-        return $this->pattern;
+        return $this->secure();
+    }
+
+    /**
+     * Determine if the route only responds to HTTPS requests.
+     *
+     * @return bool
+     */
+    public function secure()
+    {
+        return in_array('https', $this->action, true);
+    }
+
+    /**
+     * Get the domain defined for the Route.
+     *
+     * @return string|null
+     */
+    public function domain()
+    {
+        return isset($this->action['domain']) ? $this->action['domain'] : null;
     }
 
     /**
@@ -459,19 +648,16 @@ class Route
     }
 
     /**
-     * @return string|null
+     * Set the URI that the route responds to.
+     *
+     * @param  string  $uri
+     * @return \Routing\Route
      */
-    public function uri()
+    public function setUri($uri)
     {
-        return $this->uri;
-    }
+        $this->uri = $uri;
 
-    /**
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->method;
+        return $this;
     }
 
     /**
@@ -480,14 +666,6 @@ class Route
     public function getParams()
     {
         return $this->parameters();
-    }
-
-    /**
-     * @return string
-     */
-    public function getRegex()
-    {
-        return $this->regex;
     }
 
     /**
@@ -511,6 +689,16 @@ class Route
     }
 
     /**
+     * Get the action name for the route.
+     *
+     * @return string
+     */
+    public function getActionName()
+    {
+        return isset($this->action['controller']) ? $this->action['controller'] : 'Closure';
+    }
+
+    /**
      * Return the Action array.
      *
      * @return array
@@ -531,6 +719,28 @@ class Route
         $this->action = $action;
 
         return $this;
+    }
+
+    /**
+     * Return the compiled pattern the Route responds to.
+     *
+     * @return string|null
+     */
+    public function getRegex()
+    {
+        return $this->regex();
+    }
+
+    /**
+     * Return the compiled pattern the Route responds to.
+     *
+     * @return string|null
+     */
+    public function regex()
+    {
+        if (isset($this->regex)) return $this->regex;
+
+        throw new \LogicException("Route regex is not compiled.");
     }
 
 }

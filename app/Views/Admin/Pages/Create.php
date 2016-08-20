@@ -77,6 +77,64 @@
 
 		</div>
 
+		<br>
+
+		<div class='row'>
+
+			<div class='col-md-6'>
+
+				<div class="control-group">
+				    <label class="control-label" for='sidebars'> Left Sidebars</label><br>
+				    
+				    <?php
+				    $sidebars = Input::old('sidebars');
+
+				    if (is_array($sidebars)) {
+				    	$sidebars = implode(',', $sidebars);
+				    }
+
+				    foreach ($leftSidebars as $sidebar) {
+				    	if (str_contains($sidebars, $sidebar->id)) {
+				    		$check = 'checked=checked';
+				    	} else {
+				    		$check = null;
+				    	}
+				    	echo "<input type='checkbox' name='sidebars[]' value='$sidebar->id' $check> $sidebar->title<br>";
+				    }
+				    ?>
+				</div>
+
+			</div>
+
+			<div class='col-md-6'>
+
+				<div class="control-group">
+				    <label class="control-label" for='sidebars'> Right Sidebars</label><br>
+				    
+				    <?php
+				    $sidebars = Input::old('sidebars');
+
+				    if (is_array($sidebars)) {
+				    	$sidebars = implode(',', $sidebars);
+				    }
+
+				    foreach ($rightSidebars as $sidebar) {
+				    	if (str_contains($sidebars, $sidebar->id)) {
+				    		$check = 'checked=checked';
+				    	} else {
+				    		$check = null;
+				    	}
+				    	echo "<input type='checkbox' name='sidebars[]' value='$sidebar->id' $check> $sidebar->title<br>";
+				    }
+				    ?>
+				</div>
+
+			</div>
+
+		</div>
+
+		<br>
+
 		<div class="control-group">
 		    <label class="control-label" for='content'> Content</label>
 		    <textarea class="form-control ckeditor" id='content' name="content" rows='10'><?=Input::old('content');?></textarea>
