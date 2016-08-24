@@ -45,27 +45,6 @@ Route::post('password/reset', array(
     'uses' => 'App\Controllers\Admin\Authorize@postReset'
 ));
 
-// The Account Registration.
-Route::get('register', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@create'
-));
-
-Route::post('register', array(
-    'before' => 'guest|csrf',
-    'uses' => 'App\Controllers\Admin\Registrar@store'
-));
-
-Route::get('register/verify/{token}', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@verify'
-));
-
-Route::get('register/status', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@status'
-));
-
 // The Adminstration Routes.
 Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'), function() {
     //admin
