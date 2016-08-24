@@ -2,10 +2,10 @@
 
 # Nova CMS
 
-[![Total Downloads](https://img.shields.io/packagist/dt/nova-framework/framework.svg)](https://packagist.org/packages/nova-framework/cms)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nova-framework/framework/blob/master/LICENSE.txt)
-[![GitHub stars](https://img.shields.io/github/stars/nova-framework/framework.svg)](https://github.com/nova-framework/cms/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/nova-framework/framework.svg)](https://github.com/nova-framework/cms/network)
+[![Total Downloads](https://img.shields.io/packagist/dt/nova-framework/cms.svg)](https://packagist.org/packages/nova-framework/cms)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nova-framework/cms/blob/master/LICENSE.txt)
+[![GitHub stars](https://img.shields.io/github/stars/nova-framework/cms.svg)](https://github.com/nova-framework/cms/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/nova-framework/cms.svg)](https://github.com/nova-framework/cms/network)
 
 [![Join the nova chat at https://gitter.im/nova-framework/framework](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/nova-framework/framework/novausers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
