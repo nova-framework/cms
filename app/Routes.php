@@ -99,10 +99,10 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'),
     Route::post('pages',                array('before' => 'auth|csrf', 'uses' => 'Pages@store'));
     Route::get( 'pages/{id}/edit',    array('before' => 'auth',      'uses' => 'Pages@edit'));
     Route::get( 'pages/restorerevision/{id}',    array('before' => 'auth',      'uses' => 'Pages@restoreRevision'));
-    Route::post('pages/{id}',         array('before' => 'auth|csrf', 'uses' => 'Pages@update'));
     Route::post('pages/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Pages@destroy'));
     Route::post('pages/pageblocks/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Pages@destroyPageBlock'));
     Route::post('pages/updatepageblocks', array('before' => 'auth|csrf', 'uses' => 'Pages@updatePageBlocks'));
+    Route::post('pages/{id}',         array('before' => 'auth|csrf', 'uses' => 'Pages@update'));
 
     //Global Blocks
     Route::get( 'globalblocks',                array('before' => 'auth',      'uses' => 'GlobalBlocks@index'));
@@ -125,10 +125,8 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'),
     Route::post('settings', array('before' => 'auth|csrf', 'uses' => 'Settings@store'));
 });
 
-Route::get('admin(/dashboard)', array(
-    'before' => 'auth',
-    'uses' => 'App\Controllers\Admin\Dashboard@index'
-));
+Route::get('admin',         array('before' => 'auth', 'uses' => 'App\Controllers\Admin\Dashboard@index'));
+Route::get('admin/dashboard', array('before' => 'auth', 'uses' => 'App\Controllers\Admin\Dashboard@index'));
 
 // Route::catchAll('App\Controllers\Pages@fetch');
 Route::any('{slug}', 'App\Controllers\Pages@fetch')->where('slug', '(.*)');
