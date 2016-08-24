@@ -68,6 +68,14 @@ Route::get('register/status', array(
 
 // The Adminstration Routes.
 Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'), function() {
+    //admin
+    Route::get('/',         array('before' => 'auth', 'uses' => 'Dashboard@index'));
+    Route::get('dashboard', array('before' => 'auth', 'uses' => 'Dashboard@index'));
+
+    //settings
+    Route::get( 'settings', array('before' => 'auth',      'uses' => 'Settings@index'));
+    Route::post('settings', array('before' => 'auth|csrf', 'uses' => 'Settings@store'));
+
     // The User's Profile.
     Route::get( 'users/profile', array('before' => 'auth',      'uses' => 'Users@profile'));
     Route::post('users/profile', array('before' => 'auth|csrf', 'uses' => 'Users@postProfile'));
@@ -119,14 +127,6 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'),
 
     Route::get( 'editor',                array('before' => 'auth',      'uses' => 'Editor@index'));
 });
-
-Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'), function() {
-    Route::get( 'settings', array('before' => 'auth',      'uses' => 'Settings@index'));
-    Route::post('settings', array('before' => 'auth|csrf', 'uses' => 'Settings@store'));
-});
-
-Route::get('admin',         array('before' => 'auth', 'uses' => 'App\Controllers\Admin\Dashboard@index'));
-Route::get('admin/dashboard', array('before' => 'auth', 'uses' => 'App\Controllers\Admin\Dashboard@index'));
 
 // Route::catchAll('App\Controllers\Pages@fetch');
 Route::any('{slug}', 'App\Controllers\Pages@fetch')->where('slug', '(.*)');
