@@ -9,13 +9,13 @@
 
 use Core\Config;
 
-
 Config::set('cache', array(
     /*
      * Default storage
      * if you set this storage => 'files', then $cache = phpFastCache(); <-- will be files cache
      */
-    'storage' => 'files', // ssdb, predis, redis, mongodb, files, sqlite, auto, apc, wincache, xcache, memcache, memcached,
+    // ssdb, predis, redis, mongodb, files, sqlite, auto, apc, wincache, xcache, memcache, memcached,
+    'storage' => 'files',
 
     /*
      * Default Path for Cache on HDD

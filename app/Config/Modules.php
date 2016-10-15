@@ -9,7 +9,6 @@
 
 use Core\Config;
 
-
 Config::set('modules', array(
     'System',
     'Users',

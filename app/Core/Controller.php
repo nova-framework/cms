@@ -14,7 +14,6 @@ use Helpers\Url;
 
 use Session;
 
-
 class Controller extends BaseController
 {
     protected $template = 'AdminLte';
@@ -41,17 +40,16 @@ class Controller extends BaseController
         $baseUri = array_shift($parts);
 
         // Add to path the next part, if it exists, defaulting to 'dashboard'.
-        if(! empty($parts)) {
+        if (! empty($parts)) {
             $baseUri .= '/' .array_shift($parts);
         } else {
             $baseUri .= '/dashboard';
         }
 
         View::share('currentUri', $uri);
-        View::share('baseUri',    $baseUri);
+        View::share('baseUri', $baseUri);
 
         // Leave to parent's method the Execution Flow decisions.
         return parent::before();
     }
-
 }

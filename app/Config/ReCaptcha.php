@@ -8,7 +8,6 @@
 
 use Core\Config;
 
-
 /**
  * Setup the Google reCAPTCHA configuration
  */

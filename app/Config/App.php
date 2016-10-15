@@ -9,7 +9,6 @@
 
 use Core\Config;
 
-
 /**
  * The Application configuration.
  */
@@ -22,7 +21,7 @@ Config::set('app', array(
     /**
      * The Website URL.
      */
-    'url' => 'http://localhost:8888/',
+    'url' => 'http://novacms:8888/',
 
     /**
     * The Administrator's E-mail Address.
@@ -129,7 +128,8 @@ Config::set('app', array(
 
         //custom helpers
         'PageBlocks'    => '\App\Helpers\PageBlocks',
-        'GlobalBlocks'    => '\App\Helpers\GlobalBlocks',
+        'GlobalBlocks'  => '\App\Helpers\GlobalBlocks',
+        'Menu'          => '\App\Helpers\Menu',
 
         // The Forensics Console.
         'Console'       => '\Forensics\Console',

@@ -8,7 +8,6 @@
 
 use Core\Config;
 
-
 /**
  * Routing configuration
  */

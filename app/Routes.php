@@ -45,29 +45,16 @@ Route::post('password/reset', array(
     'uses' => 'App\Controllers\Admin\Authorize@postReset'
 ));
 
-// The Account Registration.
-Route::get('register', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@create'
-));
-
-Route::post('register', array(
-    'before' => 'guest|csrf',
-    'uses' => 'App\Controllers\Admin\Registrar@store'
-));
-
-Route::get('register/verify/{token}', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@verify'
-));
-
-Route::get('register/status', array(
-    'before' => 'guest',
-    'uses' => 'App\Controllers\Admin\Registrar@status'
-));
-
 // The Adminstration Routes.
 Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'), function() {
+    //admin
+    Route::get('/',         array('before' => 'auth', 'uses' => 'Dashboard@index'));
+    Route::get('dashboard', array('before' => 'auth', 'uses' => 'Dashboard@index'));
+
+    //settings
+    Route::get( 'settings', array('before' => 'auth',      'uses' => 'Settings@index'));
+    Route::post('settings', array('before' => 'auth|csrf', 'uses' => 'Settings@store'));
+
     // The User's Profile.
     Route::get( 'users/profile', array('before' => 'auth',      'uses' => 'Users@profile'));
     Route::post('users/profile', array('before' => 'auth|csrf', 'uses' => 'Users@postProfile'));
@@ -99,10 +86,10 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'),
     Route::post('pages',                array('before' => 'auth|csrf', 'uses' => 'Pages@store'));
     Route::get( 'pages/{id}/edit',    array('before' => 'auth',      'uses' => 'Pages@edit'));
     Route::get( 'pages/restorerevision/{id}',    array('before' => 'auth',      'uses' => 'Pages@restoreRevision'));
-    Route::post('pages/{id}',         array('before' => 'auth|csrf', 'uses' => 'Pages@update'));
     Route::post('pages/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Pages@destroy'));
     Route::post('pages/pageblocks/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Pages@destroyPageBlock'));
     Route::post('pages/updatepageblocks', array('before' => 'auth|csrf', 'uses' => 'Pages@updatePageBlocks'));
+    Route::post('pages/{id}',         array('before' => 'auth|csrf', 'uses' => 'Pages@update'));
 
     //Global Blocks
     Route::get( 'globalblocks',                array('before' => 'auth',      'uses' => 'GlobalBlocks@index'));
@@ -117,18 +104,18 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'),
     Route::post('sidebars/{id}',         array('before' => 'auth|csrf', 'uses' => 'Sidebars@update'));
     Route::post('sidebars/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Sidebars@destroy'));
 
+    // The Menus CRUD.
+    Route::get( 'menus',                array('before' => 'auth',      'uses' => 'Menus@index'));
+    Route::get( 'menus/create',         array('before' => 'auth',      'uses' => 'Menus@create'));
+    Route::post('menus',                array('before' => 'auth|csrf', 'uses' => 'Menus@store'));
+    Route::get( 'menus/{id}/edit',    array('before' => 'auth',      'uses' => 'Menus@edit'));
+    Route::get( 'menus/{id}/manage',    array('before' => 'auth',      'uses' => 'Menus@manage'));
+    Route::post( 'menus/{id}/manage',    array('before' => 'auth',      'uses' => 'Menus@manageUpdate'));
+    Route::post('menus/{id}',         array('before' => 'auth|csrf', 'uses' => 'Menus@update'));
+    Route::post('menus/{id}/destroy', array('before' => 'auth|csrf', 'uses' => 'Menus@destroy'));
+
     Route::get( 'editor',                array('before' => 'auth',      'uses' => 'Editor@index'));
 });
-
-Route::group(array('prefix' => 'admin', 'namespace' => 'App\Controllers\Admin'), function() {
-    Route::get( 'settings', array('before' => 'auth',      'uses' => 'Settings@index'));
-    Route::post('settings', array('before' => 'auth|csrf', 'uses' => 'Settings@store'));
-});
-
-Route::get('admin(/dashboard)', array(
-    'before' => 'auth',
-    'uses' => 'App\Controllers\Admin\Dashboard@index'
-));
 
 // Route::catchAll('App\Controllers\Pages@fetch');
 Route::any('{slug}', 'App\Controllers\Pages@fetch')->where('slug', '(.*)');

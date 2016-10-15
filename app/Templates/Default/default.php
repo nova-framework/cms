@@ -21,11 +21,37 @@ echo $css; // Place to pass data / plugable hook zone
 <?= $afterBody; // Place to pass data / plugable hook zone ?>
 
 <div class="container">
-    <p>
-        <img src='<?= template_url('images/nova.png', 'Default'); ?>' alt='<?= Config::get('app.name', SITETITLE); ?>'>
-    </p>
 
-    <p><?=GlobalBlocks::get('Phone Number', 'input');?>
+    <div class='row'>
+
+        <div class='col-md-3'>
+            <p><img src='<?= template_url('images/nova.png', 'Default'); ?>' alt='<?= Config::get('app.name', SITETITLE); ?>' class='img-responsive'></p>
+        </div>
+
+        <div class='col-md-2 pull-right'>
+            <?=GlobalBlocks::get('Phone Number', 'input');?>
+        </div>
+    </div>
+
+</div>
+
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse">
+                <?php echo GlobalBlocks::get('Header Nav','input');?>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+
+<div class="container">
 
     <div class='row'>
 
@@ -33,9 +59,9 @@ echo $css; // Place to pass data / plugable hook zone
             <?php
             if (isset($leftSidebars)) {
                 foreach ($leftSidebars as $row) {
-                    echo "<div class='widget $row->class'>"; 
-                        echo "<div class='widgetTitle'>$row->title</div>"; 
-                        echo "<div class='widgetBody'>$row->content</div>"; 
+                    echo "<div class='widget $row->class'>";
+                        echo "<div class='widgetTitle page-header'><h1>$row->title</h1></div>";
+                        echo "<div class='widgetBody'>$row->content</div>";
                     echo "</div>";
                 }
             }
@@ -56,16 +82,16 @@ echo $css; // Place to pass data / plugable hook zone
             <?php
             if (isset($rightSidebars)) {
                 foreach ($rightSidebars as $row) {
-                    echo "<div class='widget $row->class'>"; 
-                        echo "<div class='widgetTitle'>$row->title</div>"; 
-                        echo "<div class='widgetBody'>$row->content</div>"; 
+                    echo "<div class='widget $row->class'>";
+                        echo "<div class='widgetTitle page-header'><h1>$row->title</h1></div>";
+                        echo "<div class='widgetBody'>$row->content</div>";
                     echo "</div>";
                 }
             }
             ?>
         </div>
 
-    
+
 
 </div>
 

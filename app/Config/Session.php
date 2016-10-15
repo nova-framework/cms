@@ -8,7 +8,6 @@
 
 use Core\Config;
 
-
 Config::set('session', array(
     'driver' => 'file', // The Session Driver used for storing Session data; supported: 'file', 'database' or 'cookie'.
 

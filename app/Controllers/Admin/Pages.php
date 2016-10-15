@@ -49,7 +49,7 @@ class Pages extends Controller
 	    	if (is_array($input['sidebars'])) {
 	    		$page->sidebars = implode(',', $input['sidebars']);
 	    	}
-	    	
+
 	    	$page->browserTitle = $input['browserTitle'];
 	    	$page->pageTitle = $input['pageTitle'];
 	    	$page->slug = $slug;
@@ -60,7 +60,7 @@ class Pages extends Controller
 	    	$page->save();
 
 	    	return Redirect::to('admin/pages')->withStatus('Page Created');
-	    } 
+	    }
 
 	    return Redirect::back()->withStatus($validate->errors(), 'danger')->withInput();
 
@@ -123,6 +123,10 @@ class Pages extends Controller
 	    		]);
 	    	}
 
+	    	if ($id == 1) {
+	    		$slug = null;
+	    	}
+
 	    	//save
 	    	$page->browserTitle = $input['browserTitle'];
 	    	$page->pageTitle = $input['pageTitle'];
@@ -134,7 +138,7 @@ class Pages extends Controller
 	    	$page->save();
 
 	    	return Redirect::to('admin/pages')->withStatus('Page Updated');
-	    } 
+	    }
 
 	    return Redirect::back()->withStatus($validate->errors(), 'danger')->withInput();
 	}
@@ -194,7 +198,7 @@ class Pages extends Controller
 		$page = Page::find($revision->pageID);
 		$page->content = $revision->content;
 		$page->save();
-  
+
 		return Redirect::back()->withStatus('Revision Restored');
 	}
 
@@ -218,7 +222,7 @@ class Pages extends Controller
 		return $layoutFiles;
 	}
 
-	protected function validate($data) 
+	protected function validate($data)
 	{
 		$rules = [
 			'browserTitle' => 'required|min:3',
@@ -235,6 +239,3 @@ class Pages extends Controller
 		return Validator::make($data, $rules, [], $attributes);
 	}
 }
-
-
-

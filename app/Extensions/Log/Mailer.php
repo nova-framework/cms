@@ -15,7 +15,6 @@ use Monolog\Formatter\HtmlFormatter;
 
 use Swift_Message;
 
-
 class Mailer
 {
     public static function initHandler(Application $app, $logLevel = Logger::ERROR)

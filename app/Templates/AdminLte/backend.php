@@ -31,6 +31,7 @@ $user = Auth::user();
         template_url('plugins/select2/select2.min.css', 'AdminLte'),
         // Custom CSS
         template_url('css/style.css', 'AdminLte'),
+        template_url('nestable/nestable.css', 'AdminLte'),
     ));
 
     echo $css; // Place to pass data / plugable hook zone
@@ -155,6 +156,10 @@ $user = Auth::user();
                 <a href="<?= site_url('admin/globalblocks'); ?>"><i class="fa fa-cubes"></i> <span><?= __d('admin_lte', 'Global Blocks'); ?></span></a>
             </li>
 
+            <li <?php if ($baseUri == 'admin/menus') { echo "class='active'"; } ?>>
+                <a href="<?= site_url('admin/menus'); ?>"><i class="fa fa-list"></i> <span><?= __d('admin_lte', 'Menus'); ?></span></a>
+            </li>
+
             <li <?php if ($baseUri == 'admin/sidebars') { echo "class='active'"; } ?>>
                 <a href="<?= site_url('admin/sidebars'); ?>"><i class="fa fa-cubes"></i> <span><?= __d('admin_lte', 'Sidebars'); ?></span></a>
             </li>
@@ -208,7 +213,9 @@ Assets::js(array(
     // Select2
     template_url('plugins/select2/select2.full.min.js', 'AdminLte'),
 
-    site_url('ckeditor/ckeditor.js')
+    site_url('ckeditor/ckeditor.js'),
+
+    template_url('nestable/nestable.js', 'AdminLte')
 
 ));
 

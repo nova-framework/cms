@@ -9,7 +9,6 @@
 
 use Core\Config;
 
-
 /**
  * Setup the Database configuration.
  */

@@ -16,7 +16,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-
 class ContentGuard implements HttpKernelInterface
 {
     /**
@@ -108,5 +107,4 @@ class ContentGuard implements HttpKernelInterface
 
         $response->setContent($content);
     }
-
 }

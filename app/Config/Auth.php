@@ -8,7 +8,6 @@
 
 use Core\Config;
 
-
 Config::set('auth', array(
     // The default Authentication Driver
     'driver' => 'extended',               // Supported: "database", "extended"

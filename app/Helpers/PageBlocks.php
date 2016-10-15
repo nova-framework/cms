@@ -17,6 +17,5 @@ class PageBlocks
 	    }
 
 	    return DB::table('page_blocks')->where('pageID', $pageID)->where('title', $title)->where('type', $type)->pluck('content');
-
 	}
 }

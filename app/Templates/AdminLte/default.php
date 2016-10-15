@@ -23,6 +23,7 @@
         template_url('plugins/iCheck/square/blue.css', 'AdminLte'),
         // Custom CSS
         template_url('css/style.css', 'AdminLte'),
+        template_url('nestable/nestable.css', 'AdminLte'),
     ));
 
     echo $css; // Place to pass data / plugable hook zone
@@ -110,7 +111,7 @@ Assets::js(array(
     // AdminLTE App
     template_url('dist/js/app.min.js', 'AdminLte'),
     // iCheck
-    template_url('plugins/iCheck/icheck.min.js', 'AdminLte'),
+    template_url('plugins/iCheck/icheck.min.js', 'AdminLte')
 ));
 
 echo $js; // Place to pass data / plugable hook zone

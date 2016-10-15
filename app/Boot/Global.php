@@ -12,8 +12,7 @@ Log::useFiles(storage_path() .'Logs' .DS .'error.log');
 
 use Exception\RedirectToException;
 
-App::error(function(Exception $exception, $code)
-{
+App::error(function (Exception $exception, $code) {
     // Do not log the Redirect Exceptions.
     if (! $exception instanceof RedirectToException) {
         Log::error($exception);
@@ -26,8 +25,7 @@ App::error(function(Exception $exception, $code)
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-App::missing(function(NotFoundHttpException $exception)
-{
+App::missing(function (NotFoundHttpException $exception) {
     $status = $exception->getStatusCode();
 
     $headers = $exception->getHeaders();
@@ -47,7 +45,7 @@ App::missing(function(NotFoundHttpException $exception)
 use Config\Repository as ConfigRepository;
 use Support\Facades\Facade;
 
-if(CONFIG_STORE == 'database') {
+if (CONFIG_STORE == 'database') {
     // Get the Database Connection instance.
     $connection = $app['db']->connection();
 
@@ -62,7 +60,7 @@ if(CONFIG_STORE == 'database') {
 
     // Make the Facade to refresh its information.
     Facade::clearResolvedInstance('config');
-} else if(CONFIG_STORE != 'files') {
+} elseif (CONFIG_STORE != 'files') {
     throw new \InvalidArgumentException('Invalid Config Store type.');
 }
 

@@ -8,7 +8,6 @@
 
 use Core\Config;
 
-
 Config::set('mail', array(
     'driver' => 'smtp',
     'host'   => '',
