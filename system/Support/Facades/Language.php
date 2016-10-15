@@ -8,40 +8,24 @@
 
 namespace Support\Facades;
 
-use Core\Language as CoreLanguage;
+use Language\Language as CoreLanguage;
+
+use Support\Facades\Facade;
+use Support\Facades\Cookie;
+use Support\Facades\Session;
 
 use ReflectionMethod;
 use ReflectionException;
 
 
-class Language
+class Language extends Facade
 {
+
     /**
-     * Magic Method for calling the methods on the default Language instance.
+     * Get the registered name of the component.
      *
-     * @param $method
-     * @param $params
-     *
-     * @return mixed
+     * @return string
      */
-    public static function __callStatic($method, $params)
-    {
-        // First handle the static Methods from Core\Language.
-        try {
-            $reflection = new ReflectionMethod(CoreLanguage::class, $method);
-
-            if ($reflection->isStatic()) {
-                // The requested Method is static.
-                return call_user_func_array(array(CoreLanguage::class, $method), $params);
-            }
-        } catch ( ReflectionException $e ) {
-            // Nothing to do.
-        }
-
-        // Get a Core\Language instance.
-        $instance = CoreLanguage::getInstance();
-
-        // Call the non-static method from the Language instance.
-        return call_user_func_array(array($instance, $method), $params);
-    }
+    protected static function getFacadeAccessor() { return 'language'; }
+    
 }

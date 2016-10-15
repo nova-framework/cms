@@ -7,17 +7,31 @@
  * @date April 12th, 2016
  */
 
-use Core\Config;
-use Helpers\Url;
+use Config\Config;
+use Support\Collection;
 use Support\Str;
-use Support\Facades\Crypt;
 
-use Closure as Closure;
+use Support\Facades\Crypt;
+use Support\Facades\Facade;
+use Support\Facades\Language;
 
 
 if (! defined('NOVA_SYSTEM_FUNCTIONS')) {
 
 define('NOVA_SYSTEM_FUNCTIONS', 1);
+
+/**
+ * Generate a url for the application.
+ *
+ * @param  string  $path
+ * @param  mixed   $parameters
+ * @param  bool    $secure
+ * @return string
+ */
+function url($path = null, $parameters = array(), $secure = null)
+{
+    return app('url')->to($path, $parameters, $secure);
+}
 
 /**
  * Site URL helper
@@ -26,10 +40,7 @@ define('NOVA_SYSTEM_FUNCTIONS', 1);
  */
 function site_url($path = '/')
 {
-    // The base URL.
-    $siteUrl = Config::get('app.url');
-
-    return $siteUrl .ltrim($path, '/');
+    return url($path);
 }
 
 /**
@@ -40,38 +51,82 @@ function site_url($path = '/')
  */
 function resource_url($path, $module = null)
 {
-    return Url::resourcePath($module) .ltrim($path, '/');
+    $basePath = ! is_null($module) ? sprintf('modules/%s', Str::snake($module)) : '';
+
+    $path = sprintf('%s/assets/%s', $basePath, ltrim($path, '/'));
+
+    return url($path);    
 }
 
 /**
  * Template URL helper
  * @param string $path
  * @param string $template
- * @param string $folder
  * @return string
  */
-function template_url($path, $template = TEMPLATE, $folder = '/assets/')
+function template_url($path, $template = null)
 {
-    return Url::templatePath($template, $folder) .ltrim($path, '/');
+    $config = app('config');
+    
+    $template = $template ?: $config['app']['template'];
+    
+    $path = sprintf('templates/%s/assets/%s', Str::snake($template), ltrim($path, '/'));
+    
+    return url($path);    
 }
 
 /**
- * Application Path helper
+ * Get the path to the application folder.
+ *
+ * @param  string  $path
  * @return string
  */
-function app_path()
+function app_path($path = '')
 {
-    return APPDIR;
+    $path = ! empty($path) ? DS .$path : '';
+
+    return app('path') .$path;
 }
 
 /**
- * Storage Path helper
+ * Get the path to the base of the install.
+ *
+ * @param  string  $path
  * @return string
  */
-function storage_path()
+function base_path($path = '')
 {
-    return STORAGE_PATH;
+    $path = ! empty($path) ? DS .$path : '';
+
+    return app('path.base') .$path;
 }
+
+/**
+ * Get the path to the storage folder.
+ *
+ * @param   string  $path
+ * @return  string
+ */
+function storage_path($path = '')
+{
+    $path = ! empty($path) ? DS .$path : '';
+
+    return app('path.storage') .$path;
+}
+
+/**
+ * Get the path to the public folder.
+ *
+ * @param  string  $path
+ * @return string
+ */
+function public_path($path = '')
+{
+    $path = ! empty($path) ? DS .$path : '';
+
+    return app('path.public') .$path;
+}
+
 
 //
 // I18N functions
@@ -90,8 +145,7 @@ function __($message, $args = null)
     //
     $params = (func_num_args() === 2) ? (array)$args : array_slice(func_get_args(), 1);
 
-    return Language::getInstance('app', LANGUAGE_CODE)
-        ->translate($message, $params);
+    return Language::instance('app')->translate($message, $params);
 }
 
 /**
@@ -109,100 +163,61 @@ function __d($domain, $message, $args = null)
     //
     $params = (func_num_args() === 3) ? (array)$args : array_slice(func_get_args(), 2);
 
-    return Language::getInstance($domain, LANGUAGE_CODE)
-        ->translate($message, $params);
+    return Language::instance($domain)->translate($message, $params);
 }
 
 /**
- * Check value to find if it was serialized.
+ * Get the root Facade application instance.
  *
- * @param  string  $data
- * @param  bool    $strict
- * @return bool
- */
-function is_serialized($data, $strict = true)
-{
-    if (! is_string($data)) return false;
-
-    $data = trim($data);
-
-    if ('N;' == $data) return true;
-
-    if (strlen($data) < 4) return false;
-
-    if (':' !== $data[1]) return false;
-
-    if ($strict) {
-        $lastc = substr($data, -1);
-
-        if ((';' !== $lastc) && ('}' !== $lastc)) {
-            return false;
-        }
-    } else {
-        $semicolon = strpos($data, ';');
-        $brace     = strpos($data, '}');
-
-        if ((false === $semicolon) && (false === $brace)) return false;
-
-        if ((false !== $semicolon) && ($semicolon < 3)) return false;
-
-        if ((false !== $brace) && ($brace < 4)) return false;
-    }
-
-    $token = $data[0];
-
-    switch ($token) {
-        case 's' :
-            if ($strict) {
-                if ('"' !== substr($data, -2, 1)) {
-                    return false;
-                }
-            } else if (false === strpos($data, '"')) {
-                return false;
-            }
-        case 'a' :
-        case 'O' :
-            return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
-        case 'b' :
-        case 'i' :
-        case 'd' :
-            $end = $strict ? '$' : '';
-
-            return (bool) preg_match("/^{$token}:[0-9.E-]+;$end/", $data);
-    }
-
-    return false;
-}
-
-/**
- * Serialize data, if needed.
- *
- * @param  mixed  $data
+ * @param  string  $make
  * @return mixed
  */
-function maybe_serialize($data)
+function app($make = null)
 {
-    if (is_array($data) || is_object($data)) {
-        return serialize($data);
+    if (! is_null($make)) {
+        return app()->make($make);
     }
 
-    return $data;
+    return Facade::getFacadeApplication();
 }
 
 /**
- * Unserialize value only if it was serialized.
+ * Generate a URL to a named route.
  *
- * @param  string $original
- * @return mixed
+ * @param  string  $name
+ * @param  array   $parameters
+ * @param  bool  $absolute
+ * @param  \Routing\Route $route
+ * @return string
  */
-function maybe_unserialize($original)
+function route($name, $parameters = array(), $absolute = true, $route = null)
 {
-    if (\is_serialized($original)) {
-        return @unserialize($original);
-    }
-
-    return $original;
+    return app('url')->route($name, $parameters, $absolute, $route);
 }
+
+/**
+ * Generate a URL to a controller action.
+ *
+ * @param  string  $name
+ * @param  array   $parameters
+ * @return string
+ */
+function action($name, $parameters = array())
+{
+    return app('url')->action($name, $parameters);
+}
+
+/**
+ * Create a collection from the given value.
+ *
+ * @param  mixed  $value
+ * @return \Support\Collection
+ */
+function collect($value = null)
+{
+    return Collection::make($value);
+}
+
 
 /** Array helpers. */
 
@@ -216,7 +231,7 @@ function maybe_unserialize($original)
  */
 function array_add($array, $key, $value)
 {
-    if ( ! isset($array[$key])) $array[$key] = $value;
+    if (! isset($array[$key])) $array[$key] = $value;
 
     return $array;
 }
@@ -399,7 +414,7 @@ function array_set(&$array, $key, $value)
     while (count($keys) > 1) {
         $key = array_shift($keys);
 
-        if ( ! isset($array[$key]) || ! is_array($array[$key])) {
+        if (! isset($array[$key]) || ! is_array($array[$key])) {
             $array[$key] = array();
         }
 
@@ -437,7 +452,7 @@ function array_forget(&$array, $key)
     while (count($keys) > 1) {
         $key = array_shift($keys);
 
-        if ( ! isset($array[$key]) || ! is_array($array[$key])) {
+        if (! isset($array[$key]) || ! is_array($array[$key])) {
             return;
         }
 
@@ -648,6 +663,40 @@ function class_basename($class)
 }
 
 /**
+ * Returns all traits used by a trait and its traits
+ *
+ * @param  string  $trait
+ * @return array
+ */
+function trait_uses_recursive($trait)
+{
+    $traits = class_uses($trait);
+
+    foreach ($traits as $trait) {
+        $traits += trait_uses_recursive($trait);
+    }
+
+    return $traits;
+}
+
+/**
+ * Returns all traits used by a class, it's subclasses and trait of their traits
+ *
+ * @param  string  $class
+ * @return array
+ */
+function class_uses_recursive($class)
+{
+    $results = [];
+
+    foreach (array_merge([$class => $class], class_parents($class)) as $class) {
+        $results += trait_uses_recursive($class);
+    }
+
+    return array_unique($results);
+}
+
+/**
  * Determine if the given object has a toString method.
  *
  * @param  object  $object
@@ -702,7 +751,7 @@ function data_get($target, $key, $default = null)
 
             $target = $target[$segment];
         } elseif (is_object($target)) {
-            if ( ! isset($target->{$segment})) {
+            if (! isset($target->{$segment})) {
                 return value($default);
             }
 
@@ -728,7 +777,7 @@ function object_get($object, $key, $default = null)
     if (is_null($key) || trim($key) == '') return $object;
 
     foreach (explode('.', $key) as $segment) {
-        if ( ! is_object($object) || ! isset($object->{$segment})) {
+        if (! is_object($object) || ! isset($object->{$segment})) {
             return value($default);
         }
 

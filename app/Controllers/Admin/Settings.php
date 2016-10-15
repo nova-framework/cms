@@ -8,7 +8,7 @@
 
 namespace App\Controllers\Admin;
 
-use Core\View;
+use View;
 use Helpers\FastCache;
 use Helpers\Url;
 use Helpers\Csrf;

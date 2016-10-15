@@ -8,6 +8,7 @@
 
 namespace Routing;
 
+use Config\Config;
 use Routing\Router;
 use Routing\Redirector;
 use Routing\UrlGenerator;
@@ -23,11 +24,31 @@ class RoutingServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerAssetsDispatcher();
+
         $this->registerRouter();
 
         $this->registerUrlGenerator();
 
         $this->registerRedirector();
+    }
+
+    /**
+     * Register the Assets Dispatcher.
+     */
+    public function registerAssetsDispatcher()
+    {
+        // NOTE: When this method is executed, the Config Store is not yet available.
+        $driver = Config::get('routing.assets.driver', 'default');
+
+        if ($driver == 'custom') {
+            $className = Config::get('routing.assets.dispatcher');
+        } else {
+            $className = 'Routing\Assets\\' .ucfirst($driver) .'Dispatcher';
+        }
+
+        // Bind the calculated class name to the Assets Dispatcher Interface.
+        $this->app->bind('Routing\Assets\DispatcherInterface', $className);
     }
 
     /**
@@ -52,7 +73,10 @@ class RoutingServiceProvider extends ServiceProvider
     {
         $this->app['url'] = $this->app->share(function($app)
         {
-            return new UrlGenerator($app->rebinding('request', function($app, $request)
+            // The URL Generator needs the Route Collection that exists on the Router.
+            $routes = $app['router']->getRoutes();
+
+            return new UrlGenerator($routes, $app->rebinding('request', function($app, $request)
             {
                 $app['url']->setRequest($request);
             }));

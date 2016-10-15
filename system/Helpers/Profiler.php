@@ -8,11 +8,9 @@
 
 namespace Helpers;
 
-use Core\Config;
-
-use DB;
-
-use Request;
+use Config\Config;
+use Support\Facades\DB;
+use Support\Facades\Request as HttpRequest;
 
 
 class Profiler
@@ -23,7 +21,7 @@ class Profiler
         $options = Config::get('profiler');
 
         // Calculate the variables.
-        $execTime = microtime(true) - Request::server('REQUEST_TIME_FLOAT');
+        $execTime = microtime(true) - HttpRequest::server('REQUEST_TIME_FLOAT');
 
         $elapsedTime = sprintf("%01.4f", $execTime);
 

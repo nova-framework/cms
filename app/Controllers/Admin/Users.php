@@ -8,8 +8,7 @@
 
 namespace App\Controllers\Admin;
 
-use Core\View;
-use Helpers\Url;
+use View;
 use Helpers\ReCaptcha;
 
 use App\Core\Controller;

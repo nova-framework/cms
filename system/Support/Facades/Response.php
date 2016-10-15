@@ -2,13 +2,12 @@
 
 namespace Support\Facades;
 
-use Core\View;
 use Http\JsonResponse;
 use Http\Response as HttpResponse;
 use Support\Contracts\ArrayableInterface;
 use Support\Facades\Template;
-
-use Str;
+use Support\Facades\View;
+use Support\Str;
 
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -95,7 +94,7 @@ class Response
     {
         $response = new BinaryFileResponse($file, 200, $headers, true, $disposition);
 
-        if ( ! is_null($name)) {
+        if (! is_null($name)) {
             return $response->setContentDisposition($disposition, $name, Str::ascii($name));
         }
 

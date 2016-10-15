@@ -4,19 +4,15 @@
 // Application Error Logger
 //--------------------------------------------------------------------------
 
-Log::useFiles(storage_path() .'Logs' .DS .'error.log');
+Log::useFiles(storage_path() .DS .'Logs' .DS .'error.log');
 
 //--------------------------------------------------------------------------
 // Application Error Handler
 //--------------------------------------------------------------------------
 
-use Exception\RedirectToException;
-
-App::error(function (Exception $exception, $code) {
-    // Do not log the Redirect Exceptions.
-    if (! $exception instanceof RedirectToException) {
-        Log::error($exception);
-    }
+App::error(function(Exception $exception, $code)
+{
+    Log::error($exception);
 });
 
 //--------------------------------------------------------------------------
@@ -25,17 +21,31 @@ App::error(function (Exception $exception, $code) {
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-App::missing(function (NotFoundHttpException $exception) {
+App::missing(function(NotFoundHttpException $exception)
+{
     $status = $exception->getStatusCode();
 
     $headers = $exception->getHeaders();
 
-    // Create the themed Error Page Response.
-    $view = Template::make('default')
+    if (Request::ajax()) {
+        // An AJAX request; we'll create a JSON Response.
+        $content = array('status' => $status);
+
+        // Setup propely the Content Type.
+        $headers['Content-Type'] = 'application/json';
+
+        return Response::json($content, $status, $headers);
+    }
+
+    // We'll create the templated Error Page Response.
+    $response = Template::make('default')
         ->shares('title', 'Error ' .$status)
         ->nest('content', 'Error/' .$status);
 
-    return Response::make($view, $status, $headers);
+    // Setup propely the Content Type.
+    $headers['Content-Type'] = 'text/html';
+
+    return Response::make($response->render(), $status, $headers);
 });
 
 //--------------------------------------------------------------------------
@@ -45,7 +55,7 @@ App::missing(function (NotFoundHttpException $exception) {
 use Config\Repository as ConfigRepository;
 use Support\Facades\Facade;
 
-if (CONFIG_STORE == 'database') {
+if(CONFIG_STORE == 'database') {
     // Get the Database Connection instance.
     $connection = $app['db']->connection();
 
@@ -60,17 +70,9 @@ if (CONFIG_STORE == 'database') {
 
     // Make the Facade to refresh its information.
     Facade::clearResolvedInstance('config');
-} elseif (CONFIG_STORE != 'files') {
+} else if(CONFIG_STORE != 'files') {
     throw new \InvalidArgumentException('Invalid Config Store type.');
 }
-
-//--------------------------------------------------------------------------
-// Start the Legacy Session
-//--------------------------------------------------------------------------
-
-use Helpers\Session as LegacySession;
-
-LegacySession::init();
 
 //--------------------------------------------------------------------------
 // Boot Stage Customization
@@ -110,7 +112,7 @@ define('SITEEMAIL', $app['config']['app.email']);
  * Send a E-Mail to administrator (defined on SITEEMAIL) when a Error is logged.
  */
 /*
-use App\Extensions\Log\Mailer as LogMailer;
+use Shared\Log\Mailer as LogMailer;
 
 LogMailer::initHandler($app);
 */

@@ -8,8 +8,8 @@
 
 namespace Database\Connectors;
 
-use Database\Connectors\Connector;
-use Database\Connectors\ConnectorInterface;
+use Database\Connector;
+use Database\ConnectorInterface;
 
 use PDO;
 
@@ -36,7 +36,7 @@ class MySqlConnector extends Connector implements ConnectorInterface
         $charset = $config['charset'];
 
         $names = "set names '$charset'".
-            ( ! is_null($collation) ? " collate '$collation'" : '');
+            (! is_null($collation) ? " collate '$collation'" : '');
 
         $connection->prepare($names)->execute();
 
@@ -62,7 +62,7 @@ class MySqlConnector extends Connector implements ConnectorInterface
         if (isset($config['port'])) {
             $dsn .= ";port={$port}";
         }
-        
+
         if (isset($config['unix_socket'])) {
             $dsn .= ";unix_socket={$config['unix_socket']}";
         }

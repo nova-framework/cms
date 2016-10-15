@@ -8,7 +8,7 @@
  */
 namespace Config;
 
-use Core\Config;
+use Config\Config;
 
 
 class FileLoader implements LoaderInterface
@@ -31,5 +31,17 @@ class FileLoader implements LoaderInterface
     public function load($group)
     {
         return Config::get($group, array());
+    }
+
+    /**
+     * Set a given configuration value.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function set($key, $value)
+    {
+        Config::set($key, $value);
     }
 }

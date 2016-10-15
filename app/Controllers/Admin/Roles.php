@@ -9,7 +9,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Config;
-use Core\View;
+use View;
 use Helpers\Url;
 use Helpers\ReCaptcha;
 

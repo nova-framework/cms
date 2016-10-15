@@ -7,6 +7,8 @@ use View\Engines\EngineResolver;
 use View\View;
 use View\ViewFinderInterface;
 
+use Closure;
+
 
 class Factory
 {
@@ -57,7 +59,7 @@ class Factory
      * @param string $path
      * @param array|string $data
      * @param string|null $module
-     * @return \Nova\View\View
+     * @return \View\View
      */
     public function make($view, $data = array(), $module = null)
     {
@@ -83,6 +85,18 @@ class Factory
     }
 
     /**
+     * Create a View instance and return its rendered content.
+     *
+     * @return string
+     */
+    public function fetch($view, $data = array(), $module = null, Closure $callback = null)
+    {
+        $instance = $this->make($view, $data, $module);
+
+        return $instance->render($callback);
+    }
+
+    /**
      * Parse the given data into a raw array.
      *
      * @param  mixed  $data
@@ -102,7 +116,7 @@ class Factory
      */
     public function share($key, $value = null)
     {
-        if ( ! is_array($key)) return $this->shared[$key] = $value;
+        if (! is_array($key)) return $this->shared[$key] = $value;
 
         foreach ($key as $innerKey => $innerValue) {
             $this->share($innerKey, $innerValue);

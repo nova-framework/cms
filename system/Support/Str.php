@@ -153,7 +153,7 @@ class Str
     {
         preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
 
-        if ( ! isset($matches[0])) return $value;
+        if (! isset($matches[0])) return $value;
 
         if (strlen($value) == strlen($matches[0])) return $value;
 
@@ -364,9 +364,8 @@ class Str
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array) $needles as $needle)
-        {
-            if ($needle != '' && strpos($haystack, $needle) === 0) return true;
+        foreach ((array) $needles as $needle) {
+            if (($needle != '') && (strpos($haystack, $needle) === 0)) return true;
         }
 
         return false;

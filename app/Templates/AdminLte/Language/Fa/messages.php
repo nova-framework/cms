@@ -1,17 +1,18 @@
 <?php
 
 return array (
-  'ADMINISTRATION' => '',
-  'Control Panel' => '',
-  'Dashboard' => '',
+  'ADMINISTRATION' => 'مدیریت کل',
+  'Control Panel' => 'پنل کنترل',
+  'Dashboard' => 'داشبورد',
+  'Files' => 'فایل ها',
   'Forgot Password?' => 'فراموشی رمزعبور؟',
   'Logout' => 'خروج',
-  'Member since {0}' => '',
+  'Member since {0}' => 'عضو از {0}',
   'Profile' => 'پروفایل',
-  'Roles' => '',
-  'Settings' => '',
-  'Sign In' => '',
-  'Sign Up' => '',
-  'Sign out' => '',
-  'Users' => '',
+  'Roles' => 'وظیفه ها',
+  'Settings' => 'تنظیمات',
+  'Sign In' => 'ورود',
+  'Sign Up' => 'عضویت',
+  'Sign out' => 'خروج',
+  'Users' => 'کاربران',
 );

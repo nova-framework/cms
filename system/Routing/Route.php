@@ -9,9 +9,15 @@
 namespace Routing;
 
 use Http\Request;
-use Routing\RouteCompiler;
+use Routing\Matching\UriValidator;
+use Routing\Matching\HostValidator;
+use Routing\Matching\MethodValidator;
+use Routing\Matching\SchemeValidator;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
+use BadMethodCallException;
+use LogicException;
 
 
 /**
@@ -41,18 +47,18 @@ class Route
     protected $action = array();
 
     /**
+     * The default values for the Route.
+     *
+     * @var array
+     */
+    protected $defaults = array();
+
+    /**
      * The regular expression requirements.
      *
      * @var array
      */
     protected $wheres = array();
-
-    /**
-     * The route compiler instance.
-     *
-     * @var \Routing\RouteCompiler
-     */
-    protected $compiler;
 
     /**
      * The matched Route parameters.
@@ -69,18 +75,18 @@ class Route
     protected $parameterNames;
 
     /**
-     * The compiled regex the Route responds to.
+     * The validators used by the routes.
      *
-     * @var string
+     * @var array
      */
-    private $regex;
+    protected static $validators;
 
     /**
-     * Boolean indicating the use of Named Parameters on not.
+     * The compiled version of the Route.
      *
-     * @var bool $namedParams
+     * @var \Symfony\Component\Routing\CompiledRoute
      */
-    private $namedParams = true;
+    protected $compiled = null;
 
 
     /**
@@ -89,14 +95,10 @@ class Route
      * @param string|array $methods HTTP methods
      * @param string $uri URL pattern
      * @param string|array|callable $action Callback function or options
-     * @param bool $namedParams Wheter or not are used the Named Parameters
      */
-    public function __construct($methods, $uri, $action, $namedParams = true)
+    public function __construct($methods, $uri, $action)
     {
-        $uri = trim($uri, '/');
-
-        //
-        $this->uri = ! empty($uri) ? $uri : '/';
+        $this->uri = $uri;
 
         $this->methods = (array) $methods;
 
@@ -109,9 +111,6 @@ class Route
         if (isset($this->action['prefix'])) {
             $this->prefix($this->action['prefix']);
         }
-
-        //
-        $this->namedParams = $namedParams;
     }
 
     /**
@@ -135,63 +134,35 @@ class Route
      * @param \Http\Request $request The dispatched Request instance
      * @param bool $includingMethod Wheter or not is matched the HTTP Method
      * @return bool Match status
-     * @internal param string $pattern URL pattern
      */
     public function matches(Request $request, $includingMethod = true)
     {
-        // Attempt to match the Route Method if it is requested.
-        if ($includingMethod && ! in_array($request->method(), $this->methods)) {
-            return false;
+        $this->compileRoute();
+
+        foreach ($this->getValidators() as $validator) {
+            if (! $includingMethod && ($validator instanceof MethodValidator)) continue;
+
+            if (! $validator->matches($this, $request)) return false;
         }
 
-        // Compile and retrieve the Route regex for matching.
-        $regex = $this->compileRoute();
-
-        // Attempt to match the Request URI to the Route regex.
-        if (preg_match($regex, $request->path(), $matches) === 1) {
-            $params = array();
-
-            // Walk over matches, looking for named parameters need to be stored.
-            foreach ($matches as $key => $value) {
-                if (! is_string($key)) {
-                    continue;
-                }
-
-                // A named parameter found.
-                $params[$key] = $value;
-            }
-
-            // Store the Route parameters, also marking this Route as bound.
-            $this->parameters = $params;
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Compile the Route pattern for matching and return it.
      *
      * @return string
+     * @throws \LogicException
      */
     public function compileRoute()
     {
-        $compiler = $this->getCompiler();
+        $optionals = $this->extractOptionalParameters();
 
-        if ($this->namedParams) {
-            // We are using the Named Parameters on Route compilation.
-            $optionals = $this->extractOptionalParameters();
+        $uri = preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri);
 
-            $uri = preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri);
-
-            $this->regex = $compiler->compileRoute($uri, $optionals);
-        } else {
-            // We are using the Unnamed Parameters on Route compilation.
-            $this->regex = $compiler->compileLegacyRoute($this->uri);
-        }
-
-        return $this->regex;
+        $this->compiled = with(
+            new SymfonyRoute($uri, $optionals, $this->wheres, array(), $this->domain() ?: '')
+        )->compile();
     }
 
     /**
@@ -203,7 +174,7 @@ class Route
     {
         preg_match_all('/\{(\w+?)\?\}/', $this->uri, $matches);
 
-        return isset($matches[1]) ? $matches[1] : array();
+        return isset($matches[1]) ? array_fill_keys($matches[1], null) : array();
     }
 
     /**
@@ -214,7 +185,7 @@ class Route
      */
     protected function parseAction($action)
     {
-        if (is_null($action) || is_string($action) || is_callable($action)) {
+        if (is_string($action) || is_callable($action)) {
             // A null, string or Closure is given as Action.
             return array('uses' => $action);
         } else if (! isset($action['uses'])) {
@@ -237,6 +208,23 @@ class Route
         {
             return is_callable($value);
         });
+    }
+
+    /**
+     * Get the route validators for the instance.
+     *
+     * @return array
+     */
+    public static function getValidators()
+    {
+        if (isset(static::$validators)) return static::$validators;
+
+        return static::$validators = array(
+            new MethodValidator(),
+            new SchemeValidator(),
+            new HostValidator(),
+            new UriValidator(),
+        );
     }
 
     /**
@@ -443,14 +431,15 @@ class Route
      */
     public function parameters()
     {
-        if (isset($this->parameters)) {
-            return array_map(function($value)
-            {
-                return is_string($value) ? rawurldecode($value) : $value;
-            }, $this->parameters);
+        if (! isset($this->parameters)) {
+            throw new LogicException("Route is not bound.");
         }
 
-        throw new \LogicException("Route is not bound.");
+        return array_map(function($value)
+        {
+            return is_string($value) ? rawurldecode($value) : $value;
+
+        }, $this->parameters);
     }
 
     /**
@@ -473,9 +462,7 @@ class Route
      */
     public function parameterNames()
     {
-        if (isset($this->parameterNames)) {
-            return $this->parameterNames;
-        }
+        if (isset($this->parameterNames)) return $this->parameterNames;
 
         return $this->parameterNames = $this->compileParameterNames();
     }
@@ -487,12 +474,121 @@ class Route
      */
     protected function compileParameterNames()
     {
-        preg_match_all('/\{(.*?)\}/', $this->uri, $matches);
+        preg_match_all('/\{(.*?)\}/', $this->domain() .$this->uri, $matches);
 
         return array_map(function($value)
         {
             return trim($value, '?');
+
         }, $matches[1]);
+    }
+
+    /**
+     * Bind the Route to a given Request for execution.
+     *
+     * @param  \Http\Request  $request
+     * @return $this
+     */
+    public function bind(Request $request)
+    {
+        $this->compileRoute();
+
+        $this->bindParameters($request);
+
+        return $this;
+    }
+
+    /**
+     * Extract the parameter list from the request.
+     *
+     * @param  \Http\Request  $request
+     * @return array
+     */
+    public function bindParameters(Request $request)
+    {
+        $parameters = $this->matchToKeys(
+            array_slice($this->bindPathParameters($request), 1)
+        );
+
+        if (! is_null($this->compiled->getHostRegex())) {
+            $params = $this->bindHostParameters($request, $params);
+        }
+
+        return $this->parameters = $this->replaceDefaults($parameters);
+    }
+
+    /**
+     * Get the parameter matches for the path portion of the URI.
+     *
+     * @param  \Http\Request  $request
+     * @return array
+     */
+    protected function bindPathParameters(Request $request)
+    {
+        preg_match($this->compiled->getRegex(), '/' .$request->decodedPath(), $matches);
+
+        return $matches;
+    }
+
+    /**
+     * Extract the parameter list from the host part of the request.
+     *
+     * @param  \Http\Request  $request
+     * @param  array  $parameters
+     * @return array
+     */
+    protected function bindHostParameters(Request $request, $parameters)
+    {
+        preg_match($this->compiled->getHostRegex(), $request->getHost(), $matches);
+
+        return array_merge($this->matchToKeys(array_slice($matches, 1)), $parameters);
+    }
+
+    /**
+     * Combine a set of parameter matches with the route's keys.
+     *
+     * @param  array  $matches
+     * @return array
+     */
+    protected function matchToKeys(array $matches)
+    {
+        if (count($this->parameterNames()) == 0) return array();
+
+        $parameters = array_intersect_key($matches, array_flip($this->parameterNames()));
+
+        return array_filter($parameters, function($value)
+        {
+            return is_string($value) && (strlen($value) > 0);
+        });
+    }
+
+    /**
+     * Replace null parameters with their defaults.
+     *
+     * @param  array  $parameters
+     * @return array
+     */
+    protected function replaceDefaults(array $parameters)
+    {
+        foreach ($parameters as $key => &$value) {
+            $value = isset($value) ? $value : array_get($this->defaults, $key);
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * Set a default value for the route.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function defaults($key, $value)
+    {
+        $this->defaults[$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -501,6 +597,7 @@ class Route
      * @param  array|string  $name
      * @param  string  $expression
      * @return $this
+     * @throws \BadMethodCallException
      */
     public function where($name, $expression = null)
     {
@@ -546,21 +643,9 @@ class Route
      */
     public function prefix($prefix)
     {
-        $uri = trim(trim($prefix, '/') .'/' .trim($this->uri, '/'), '/');
-
-        $this->uri = ! empty($uri) ? $uri : '/';
+        $this->uri = trim($prefix, '/') .'/' .trim($this->uri, '/');
 
         return $this;
-    }
-
-    /**
-     * Get a Route Compiler instance.
-     *
-     * @return \Routing\RouteCompiler
-     */
-    public function getCompiler()
-    {
-        return $this->compiler ?: $this->compiler = new RouteCompiler($this->wheres);
     }
 
     /**
@@ -675,7 +760,7 @@ class Route
      */
     public function getPrefix()
     {
-        return array_get($this->action, 'prefix');
+        return isset($this->action['prefix']) ? $this->action['prefix'] : null;
     }
 
     /**
@@ -685,7 +770,7 @@ class Route
      */
     public function getName()
     {
-        return array_get($this->action, 'as');
+        return isset($this->action['as']) ? $this->action['as'] : null;
     }
 
     /**
@@ -722,25 +807,13 @@ class Route
     }
 
     /**
-     * Return the compiled pattern the Route responds to.
+     * Get the compiled version of the Route.
      *
-     * @return string|null
+     * @return \Symfony\Component\Routing\CompiledRoute
      */
-    public function getRegex()
+    public function getCompiled()
     {
-        return $this->regex();
-    }
-
-    /**
-     * Return the compiled pattern the Route responds to.
-     *
-     * @return string|null
-     */
-    public function regex()
-    {
-        if (isset($this->regex)) return $this->regex;
-
-        throw new \LogicException("Route regex is not compiled.");
+        return $this->compiled;
     }
 
 }

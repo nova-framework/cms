@@ -13,7 +13,7 @@
 require ROOTDIR .'vendor/autoload.php';
 
 // The used Classes.
-use Core\Config;
+use Config\Config;
 use Config\Repository as ConfigRepository;
 use Foundation\AliasLoader;
 use Foundation\Application;
@@ -62,6 +62,14 @@ define('STORAGE_PATH', APPDIR .'Storage' .DS);
 define('VERSION', Application::VERSION);
 
 //--------------------------------------------------------------------------
+// Load Global Configuration
+//--------------------------------------------------------------------------
+
+$path = APPDIR .'Config.php';
+
+if (is_readable($path)) require $path;
+
+//--------------------------------------------------------------------------
 // Create New Application
 //--------------------------------------------------------------------------
 
@@ -74,8 +82,7 @@ $app->instance('app', $app);
 //--------------------------------------------------------------------------
 
 $env = $app->detectEnvironment(array(
-    'local'   => array('your-local-machine-name'),
-    'testing' => array('darkstar'),
+    'local' => array('darkstar'),
 ));
 
 //--------------------------------------------------------------------------
@@ -111,37 +118,14 @@ $app->registerCoreContainerAliases();
 
 $app->startExceptionHandling();
 
-if ($env != 'testing') {
-    ini_set('display_errors', 'Off');
-}
+if ($env != 'testing') ini_set('display_errors', 'Off');
 
 //--------------------------------------------------------------------------
 // Load The Configuration
 //--------------------------------------------------------------------------
 
-// Load first the file constants file.
-$path = app_path() .'Config.php';
-
-if (is_readable($path)) {
-    require $path;
-}
-
-// Include all other files located on Config directory.
-foreach (glob(app_path() .'Config/*.php') as $path) {
-    if (is_readable($path)) {
-        require $path;
-    }
-}
-
-// Load the Modules configuration.
-$modules = Config::get('modules');
-
-foreach ($modules as $module) {
-    $path = app_path() .'Modules' .DS .$module .DS .'Config.php';
-
-    if (is_readable($path)) {
-        require $path;
-    }
+foreach (glob(app_path() .DS .'Config/*.php') as $path) {
+    if (is_readable($path)) require $path;
 }
 
 //--------------------------------------------------------------------------
@@ -192,7 +176,7 @@ $app->getProviderRepository()->load($app, $providers);
 // Additional Middleware On Application
 //--------------------------------------------------------------------------
 
-App::middleware('App\Extensions\Http\ContentGuard', array(
+App::middleware('Shared\Http\ContentGuard', array(
     $app['config']['app.debug']
 ));
 
@@ -200,107 +184,57 @@ App::middleware('App\Extensions\Http\ContentGuard', array(
 // Register Booted Start Files
 //--------------------------------------------------------------------------
 
-$app->booted(function () use ($app, $env, $modules) {
+$app->booted(function() use ($app, $env)
+{
 
-    //--------------------------------------------------------------------------
-    // Load The Application Start Script
-    //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// Load The Application Start Script
+//--------------------------------------------------------------------------
 
-    $path = $app['path'] .DS .'Boot' .DS .'Global.php';
+$path = $app['path'] .DS .'Boot' .DS .'Global.php';
 
-    if (is_readable($path)) {
-        require $path;
-    }
+if (is_readable($path)) require $path;
 
-    //--------------------------------------------------------------------------
-    // Load The Environment Start Script
-    //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// Load The Environment Start Script
+//--------------------------------------------------------------------------
 
-    $path = $app['path'] .DS .'Boot' .DS .'Environment' .DS .ucfirst($env) .'.php';
+$path = $app['path'] .DS .'Boot' .DS .'Environment' .DS .ucfirst($env) .'.php';
 
-    if (is_readable($path)) {
-        require $path;
-    }
+if (is_readable($path)) require $path;
 
-    //--------------------------------------------------------------------------
-    // Load The Application Events
-    //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// Load The Application Events
+//--------------------------------------------------------------------------
 
-    // Load the Events defined on Modules.
-    foreach ($modules as $module) {
-        $path = app_path() .'Modules' .DS .$module .DS .'Events.php';
+$path = app_path() .DS .'Events.php';
 
-        if (is_readable($path)) {
-            require $path;
-        }
-    }
+if (is_readable($path)) require $path;
 
-    // Load the Events defined on App.
-    $path = app_path() .'Events.php';
+//--------------------------------------------------------------------------
+// Load The Application's Route Filters
+//--------------------------------------------------------------------------
 
-    if (is_readable($path)) {
-        require $path;
-    }
+$path = app_path() .DS .'Filters.php';
 
-    //--------------------------------------------------------------------------
-    // Load The Application's Route Filters
-    //--------------------------------------------------------------------------
+if (is_readable($path)) require $path;
 
-    // Load the Filters defined on Modules.
-    foreach ($modules as $module) {
-        $path = app_path() .'Modules' .DS .$module .DS .'Filters.php';
+//--------------------------------------------------------------------------
+// Load The Application Routes
+//--------------------------------------------------------------------------
 
-        if (is_readable($path)) {
-            require $path;
-        }
-    }
+$path = app_path() .DS .'Routes.php';
 
-    // Load the Filters defined on App.
-    $path = app_path() .'Filters.php';
+if (is_readable($path)) require $path;
 
-    if (is_readable($path)) {
-        require $path;
-    }
+//--------------------------------------------------------------------------
+// Load The Application Bootstrap
+//--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // Load The Application Routes
-    //--------------------------------------------------------------------------
+$path = app_path() .DS .'Bootstrap.php';
 
-    // Load the Routes defined on Modules.
-    foreach ($modules as $module) {
-        $path = app_path() .'Modules' .DS .$module .DS .'Routes.php';
+if (is_readable($path)) require $path;
 
-        if (is_readable($path)) {
-            require $path;
-        }
-    }
-
-    // Load the Routes defined on App.
-    $path = app_path() .'Routes.php';
-
-    if (is_readable($path)) {
-        require $path;
-    }
-
-    //--------------------------------------------------------------------------
-    // Load The Application Bootstrap
-    //--------------------------------------------------------------------------
-
-    // Load the Bootstrap files existing on Modules.
-    foreach ($modules as $module) {
-        $path = app_path() .'Modules' .DS .$module .DS .'Bootstrap.php';
-
-        if (is_readable($path)) {
-            require $path;
-        }
-    }
-
-    // Load the Routes defined on App.
-    $path = app_path() .'Bootstrap.php';
-
-    if (is_readable($path)) {
-        require $path;
-    }
 });
 
 //--------------------------------------------------------------------------

@@ -2,10 +2,11 @@
 
 namespace Template;
 
-use Core\Config;
-use Core\Language;
+use Config\Config;
 use Foundation\Application;
+use Language\LanguageManager;
 use Support\Contracts\ArrayableInterface as Arrayable;
+use Template\Template;
 use View\Factory as ViewFactory;
 use View\ViewFinderInterface;
 use View\View;
@@ -14,11 +15,11 @@ use View\View;
 class Factory
 {
     /**
-     * The View Factory instance.
+     * The Application instance.
      *
-     * @var \View\Factory
+     * @var \Foundation\Application
      */
-    protected $factory;
+    protected $app;
 
     /**
      * The view finder implementation.
@@ -27,17 +28,17 @@ class Factory
      */
     protected $finder;
 
-
     /**
      * Create new Template Factory instance.
      *
      * @param $factory The View Factory instance.
      * @return void
      */
-    function __construct(ViewFactory $factory, ViewFinderInterface $finder)
+    function __construct(Application $app, ViewFinderInterface $finder)
     {
-        $this->factory = $factory;
-        $this->finder  = $finder;
+        $this->app = $app;
+
+        $this->finder = $finder;
     }
 
     /**
@@ -46,7 +47,7 @@ class Factory
      * @param string $view
      * @param array|string $data
      * @param string $custom
-     * @return \Nova\View\View
+     * @return \View\View
      */
     public function make($view, $data = array(), $template = null)
     {
@@ -62,13 +63,16 @@ class Factory
         // Get the View file path.
         $path = $this->find($view, $template);
 
-        // Get the View Engine instance.
-        $engine = $this->getEngineFromPath($path);
-
         // Get the parsed data.
         $data = $this->parseData($data);
 
-        return new View($this->factory, $engine, $view, $path, $data, true);
+        // Get the View Factory instance.
+        $factory = $this->getViewFactory();
+
+        // Get the View Engine instance.
+        $engine = $factory->getEngineFromPath($path);
+
+        return new Template($factory, $engine, $view, $path, $data);
     }
 
     /**
@@ -100,17 +104,6 @@ class Factory
     }
 
     /**
-     * Get the appropriate View Engine for the given path.
-     *
-     * @param  string  $path
-     * @return \View\Engines\EngineInterface
-     */
-    protected function getEngineFromPath($path)
-    {
-        return $this->factory->getEngineFromPath($path);
-    }
-
-    /**
      * Find the View file.
      *
      * @param    string     $view
@@ -119,24 +112,53 @@ class Factory
      */
     protected function find($view, $template = null)
     {
-        $language = Language::getInstance();
-
-        $suffix = ($language->direction() == 'rtl') ? '-rtl' : '';
-
         // Calculate the current Template name.
         $template = $template ?: Config::get('app.template');
 
         // Calculate the search path.
-        $path = sprintf('Templates/%s/%s%s', $template, $view, $suffix);
+        $path = sprintf('Templates/%s/%s', $template, $view);
 
         // Make the path absolute and adjust the directory separator.
         $path = str_replace('/', DS, APPDIR .$path);
 
-        //
-        $filePath = $this->finder->find($path);
+        // Find the View file depending on the Language direction.
+        $language = $this->getLanguage();
+
+        if ($language->direction() == 'rtl') {
+            // Search for the View file used on the RTL languages.
+            $filePath = $this->finder->find($path .'-rtl');
+        } else {
+            $filePath = null;
+        }
+
+        if (is_null($filePath)) {
+            $filePath = $this->finder->find($path);
+        }
 
         if (! is_null($filePath)) return $filePath;
 
         throw new \InvalidArgumentException("Unable to load the view '" .$view ."' on template '" .$template ."'.", 1);
+    }
+
+    /**
+     * Return the current View Factory instance.
+     *
+     * @return \View\Factory
+     */
+    protected function getViewFactory()
+    {
+        return $this->app['view'];
+    }
+
+    /**
+     * Return the current Language instance.
+     *
+     * @return \Language\Language
+     */
+    protected function getLanguage()
+    {
+        $languages = $this->app['language'];
+
+        return $languages->instance();
     }
 }

@@ -2,49 +2,67 @@
 
 namespace Database;
 
-use Database\Connection;
+use Support\Str;
+use Database\ConnectionFactory;
 
 
 class DatabaseManager implements ConnectionResolverInterface
 {
     /**
-     * The Application instance.
+     * The application instance.
      *
      * @var \Foundation\Application
      */
     protected $app;
 
     /**
-     * The active Connection instances.
+     * The database connection factory instance.
+     *
+     * @var \Database\ConnectionFactory
+     */
+    protected $factory;
+
+    /**
+     * The active connection instances.
      *
      * @var array
      */
     protected $connections = array();
 
+    /**
+     * The custom connection resolvers.
+     *
+     * @var array
+     */
+    protected $extensions = array();
 
     /**
-     * Create a new Database Manager instance.
+     * Create a new database manager instance.
      *
-     * @param  \core\Application  $app
+     * @param  \Foundation\Application  $app
+     * @param  \Database\ConnectionFactory  $factory
      * @return void
      */
-    public function __construct($app)
+    public function __construct($app, ConnectionFactory $factory)
     {
         $this->app = $app;
+        $this->factory = $factory;
     }
 
     /**
-     * Get a database Connection instance.
+     * Get a database connection instance.
      *
      * @param  string  $name
      * @return \Database\Connection
      */
     public function connection($name = null)
     {
-        $name = $name ?: $this->getDefaultConnection();
+        list($name, $type) = $this->parseConnectionName($name);
 
         if (! isset($this->connections[$name])) {
             $connection = $this->makeConnection($name);
+
+            $this->setPdoForType($connection, $type);
 
             $this->connections[$name] = $this->prepare($connection);
         }
@@ -53,18 +71,29 @@ class DatabaseManager implements ConnectionResolverInterface
     }
 
     /**
-     * Reconnect to the given database.
+     * Parse the connection into an array of the name and read / write type.
      *
      * @param  string  $name
-     * @return \Database\Connection
+     * @return array
      */
-    public function reconnect($name = null)
+    protected function parseConnectionName($name)
     {
         $name = $name ?: $this->getDefaultConnection();
 
+        return Str::endsWith($name, ['::read', '::write']) ? explode('::', $name, 2) : [$name, null];
+    }
+
+    /**
+     * Disconnect from the given database and remove from local cache.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    public function purge($name = null)
+    {
         $this->disconnect($name);
 
-        return $this->connection($name);
+        unset($this->connections[$name]);
     }
 
     /**
@@ -75,9 +104,41 @@ class DatabaseManager implements ConnectionResolverInterface
      */
     public function disconnect($name = null)
     {
-        $name = $name ?: $this->getDefaultConnection();
+        if (isset($this->connections[$name = $name ?: $this->getDefaultConnection()])) {
+            $this->connections[$name]->disconnect();
+        }
+    }
 
-        unset($this->connections[$name]);
+    /**
+     * Reconnect to the given database.
+     *
+     * @param  string  $name
+     * @return \Database\Connection
+     */
+    public function reconnect($name = null)
+    {
+        $this->disconnect($name = $name ?: $this->getDefaultConnection());
+
+        if (! isset($this->connections[$name])) {
+            return $this->connection($name);
+        }
+
+        return $this->refreshPdoConnections($name);
+    }
+
+    /**
+     * Refresh the PDO connections on a given connection.
+     *
+     * @param  string  $name
+     * @return \Database\Connection
+     */
+    protected function refreshPdoConnections($name)
+    {
+        $fresh = $this->makeConnection($name);
+
+        return $this->connections[$name]
+            ->setPdo($fresh->getPdo())
+            ->setReadPdo($fresh->getReadPdo());
     }
 
     /**
@@ -90,7 +151,17 @@ class DatabaseManager implements ConnectionResolverInterface
     {
         $config = $this->getConfig($name);
 
-        return new Connection($config);
+        if (isset($this->extensions[$name])) {
+            return call_user_func($this->extensions[$name], $config, $name);
+        }
+
+        $driver = $config['driver'];
+
+        if (isset($this->extensions[$driver])) {
+            return call_user_func($this->extensions[$driver], $config, $name);
+        }
+
+        return $this->factory->make($config, $name);
     }
 
     /**
@@ -109,24 +180,44 @@ class DatabaseManager implements ConnectionResolverInterface
 
         $app = $this->app;
 
-        // Setup the Cache.
         $connection->setCacheManager(function() use ($app)
         {
             return $app['cache'];
         });
 
-
-        // Setup the Paginator.
         $connection->setPaginator(function() use ($app)
         {
             return $app['paginator'];
+        });
+
+        $connection->setReconnector(function($connection)
+        {
+            $this->reconnect($connection->getName());
         });
 
         return $connection;
     }
 
     /**
-     * Get the configuration for a Connection.
+     * Prepare the read write mode for database connection instance.
+     *
+     * @param  \Database\Connection  $connection
+     * @param  string  $type
+     * @return \Database\Connection
+     */
+    protected function setPdoForType(Connection $connection, $type = null)
+    {
+        if ($type == 'read') {
+            $connection->setPdo($connection->getReadPdo());
+        } else if ($type == 'write') {
+            $connection->setReadPdo($connection->getPdo());
+        }
+
+        return $connection;
+    }
+
+    /**
+     * Get the configuration for a connection.
      *
      * @param  string  $name
      * @return array
@@ -137,6 +228,7 @@ class DatabaseManager implements ConnectionResolverInterface
     {
         $name = $name ?: $this->getDefaultConnection();
 
+        //
         $connections = $this->app['config']['database.connections'];
 
         if (is_null($config = array_get($connections, $name))) {
@@ -174,7 +266,7 @@ class DatabaseManager implements ConnectionResolverInterface
      * @param  callable  $resolver
      * @return void
      */
-    public function extend($name, $resolver)
+    public function extend($name, callable $resolver)
     {
         $this->extensions[$name] = $resolver;
     }

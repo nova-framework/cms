@@ -1,36 +1,59 @@
+<?php
+/**
+ * Frontend Default Layout
+ */
+
+// Generate the Language Changer menu.
+$langCode = Language::code();
+$langName = Language::name();
+
+$languages = Config::get('languages');
+
+//
+ob_start();
+
+foreach ($languages as $code => $info) {
+?>
+<li class="header <?php if ($code == $langCode) { echo 'active'; } ?>">
+    <a href='<?= site_url('language/' .$code); ?>' title='<?= $info['info']; ?>'><?= $info['name']; ?></a>
+</li>
+<?php
+}
+
+$langMenuLinks = ob_get_clean();
+?>
 <!DOCTYPE html>
-<html>
+<html lang="<?= $langCode; ?>">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><?= $title; ?> | <?= Config::get('app.name', SITETITLE); ?></title>
-    <?= $meta; // Place to pass data / plugable hook zone ?>
+    <?= isset($meta) ? $meta : ''; // Place to pass data / plugable hook zone ?>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php
     Assets::css(array(
         // Bootstrap 3.3.5
-        template_url('bootstrap/css/bootstrap.min.css', 'AdminLte'),
+        site_url('vendor/almasaeed2010/adminlte/bootstrap/css/bootstrap.min.css'),
         // Font Awesome
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css',
         // Ionicons
         'https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css',
         // Theme style
-        template_url('dist/css/AdminLTE.min.css', 'AdminLte'),
+        site_url('vendor/almasaeed2010/adminlte/dist/css/AdminLTE.min.css'),
         // AdminLTE Skins
-        template_url('dist/css/skins/_all-skins.min.css', 'AdminLte'),
+        site_url('vendor/almasaeed2010/adminlte/dist/css/skins/_all-skins.min.css'),
         // iCheck
-        template_url('plugins/iCheck/square/blue.css', 'AdminLte'),
+        site_url('vendor/almasaeed2010/adminlte/plugins/iCheck/square/blue.css'),
         // Custom CSS
         template_url('css/style.css', 'AdminLte'),
-        template_url('nestable/nestable.css', 'AdminLte'),
     ));
 
-    echo $css; // Place to pass data / plugable hook zone
+    echo isset($css) ? $css : ''; // Place to pass data / plugable hook zone
 
     //Add Controller specific JS files.
     Assets::js(array(
-            template_url('plugins/jQuery/jquery-2.2.3.min.js', 'AdminLte'),
+            site_url('vendor/almasaeed2010/adminlte/plugins/jQuery/jquery-2.2.3.min.js'),
         )
     );
 
@@ -56,6 +79,14 @@
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+                <li class="dropdown language-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class='fa fa-language'></i> <?= $langName; ?>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <?= $langMenuLinks; ?>
+                    </ul>
+                </li>
                 <?php if (Auth::check()) { ?>
                 <li <?php if($currentUri == 'profile') echo 'class="active"'; ?>>
                     <a href='<?= site_url('profile'); ?>'><i class='fa fa-user'></i> <?= __d('admin_lte', 'Profile'); ?></a>
@@ -64,6 +95,9 @@
                     <a href='<?= site_url('logout'); ?>'><i class='fa fa-sign-out'></i> <?= __d('admin_lte', 'Logout'); ?></a>
                 </li>
                 <?php } else { ?>
+               <li <?php if($currentUri == 'register') echo 'class="active"'; ?>>
+                    <a href='<?= site_url('register'); ?>'><i class='fa fa-user'></i> <?= __d('admin_lte', 'Sign Up'); ?></a>
+                </li>
                 <li <?php if($currentUri == 'login') echo 'class="active"'; ?>>
                     <a href='<?= site_url('login'); ?>'><i class='fa fa-sign-out'></i> <?= __d('admin_lte', 'Sign In'); ?></a>
                 </li>
@@ -107,15 +141,16 @@
 <?php
 Assets::js(array(
     // Bootstrap 3.3.5
-    template_url('bootstrap/js/bootstrap.min.js', 'AdminLte'),
+    site_url('vendor/almasaeed2010/adminlte/bootstrap/js/bootstrap.min.js'),
     // AdminLTE App
-    template_url('dist/js/app.min.js', 'AdminLte'),
+    site_url('vendor/almasaeed2010/adminlte/dist/js/app.min.js'),
     // iCheck
-    template_url('plugins/iCheck/icheck.min.js', 'AdminLte')
+    site_url('vendor/almasaeed2010/adminlte/plugins/iCheck/icheck.min.js'),
 ));
 
-echo $js; // Place to pass data / plugable hook zone
-echo $footer; // Place to pass data / plugable hook zone
+echo isset($js) ? $js : ''; // Place to pass data / plugable hook zone
+
+echo isset($footer) ? $footer : ''; // Place to pass data / plugable hook zone
 ?>
 
 <script>

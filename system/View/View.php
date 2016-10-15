@@ -15,6 +15,7 @@ use View\Engines\EngineInterface;
 use View\Factory;
 
 use ArrayAccess;
+use Closure;
 use Exception;
 
 
@@ -52,18 +53,13 @@ class View implements ArrayAccess, Renderable
      */
     protected $data = array();
 
-    /**
-     * @var bool Falg marking the View as Template.
-     */
-    protected $layout = false;
-
 
     /**
      * Constructor
      * @param mixed $path
      * @param array $data
      */
-    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = array(), $layout = false)
+    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = array())
     {
         $this->factory = $factory;
         $this->engine  = $engine;
@@ -73,8 +69,6 @@ class View implements ArrayAccess, Renderable
         $this->path = $path;
 
         $this->data = ($data instanceof Arrayable) ? $data->toArray() : (array) $data;
-
-        $this->layout = $layout;
     }
 
     /**
@@ -99,7 +93,7 @@ class View implements ArrayAccess, Renderable
      */
     public function renderContents()
     {
-        return $this->engine->render($this->path, $this->gatherData());
+        return $this->engine->get($this->path, $this->gatherData());
     }
 
     /**
@@ -140,10 +134,8 @@ class View implements ArrayAccess, Renderable
      */
     public function nest($key, $view, array $data = array(), $module = null)
     {
-        if(empty($data)) {
-            // The nested View instance inherit parent Data if none is given.
-            $data = $this->data;
-        }
+        // The nested View instance inherit parent Data if none is given.
+        if (empty($data)) $data = $this->data;
 
         return $this->with($key, $this->factory->make($view, $data, $module));
     }
@@ -171,8 +163,8 @@ class View implements ArrayAccess, Renderable
     /**
      * Add validation errors to the view.
      *
-     * @param  \Nova\Support\Contracts\MessageProviderInterface|array  $provider
-     * @return \Nova\View\View
+     * @param  \Support\Contracts\MessageProviderInterface|array  $provider
+     * @return \View\View
      */
     public function withErrors($provider)
     {
@@ -204,21 +196,11 @@ class View implements ArrayAccess, Renderable
     /**
      * Get the View Factory instance.
      *
-     * @return \Nova\View\Factory
+     * @return \View\Factory
      */
     public function getFactory()
     {
         return $this->factory;
-    }
-
-    /**
-     * Return true if the current View instance is a Layout.
-     *
-     * @return bool
-     */
-    public function isLayout()
-    {
-        return $this->layout;
     }
 
     /**
@@ -323,7 +305,7 @@ class View implements ArrayAccess, Renderable
      *
      * @param  string  $method
      * @param  array   $params
-     * @return \Nova\View\View|static|void
+     * @return \View\View|static|void
      *
      * @throws \BadMethodCallException
      */

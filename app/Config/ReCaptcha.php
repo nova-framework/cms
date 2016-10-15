@@ -6,7 +6,8 @@
  * @version 3.0
  */
 
-use Core\Config;
+use Config\Config;
+
 
 /**
  * Setup the Google reCAPTCHA configuration

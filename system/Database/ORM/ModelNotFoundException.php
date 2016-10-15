@@ -6,23 +6,23 @@ namespace Database\ORM;
 class ModelNotFoundException extends \RuntimeException
 {
     /**
-     * Name of the affected ORM Model.
+     * Name of the affected ORM model.
      *
      * @var string
      */
     protected $model;
 
     /**
-     * Set the affected ORM Model.
+     * Set the affected ORM model.
      *
      * @param  string   $model
-     * @return ModelNotFoundException
+     * @return $this
      */
     public function setModel($model)
     {
         $this->model = $model;
 
-        $this->message = "No query results for Model [{$model}].";
+        $this->message = "No query results for model [{$model}].";
 
         return $this;
     }

@@ -1,14 +1,17 @@
 <?php
 namespace App\Controllers;
 
-use Core\Controller;
-use Core\View;
+use App\Core\Controller;
+use View;
 use Request;
 use App\Models\Page;
 use App\Models\Sidebar;
 
 class Pages extends Controller
 {
+	protected $template = 'Default';
+	protected $layout = 'default';
+
 	public function fetch()
 	{
         $request = Request::path();

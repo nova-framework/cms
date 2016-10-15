@@ -11,7 +11,7 @@ use Input;
 use Redirect;
 use Validator;
 use Helpers\Document;
-use Helpers\Url;
+use Str;
 
 class Pages extends Controller
 {
@@ -41,7 +41,7 @@ class Pages extends Controller
 
 	    if ($validate->passes()) {
 
-	    	$slug = Url::generateSafeSlug($input['pageTitle']);
+	    	$slug = Str::slug($input['pageTitle']);
 
 	    	//save
 	    	$page = new Page();
@@ -103,7 +103,7 @@ class Pages extends Controller
 
 	    if ($validate->passes()) {
 
-	    	$slug = Url::generateSafeSlug($input['pageTitle']);
+	    	$slug = Str::slug($input['pageTitle']);
 
 	    	if (is_array($input['sidebars'])) {
 	    		$page->sidebars = implode(',', $input['sidebars']);

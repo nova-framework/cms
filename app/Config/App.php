@@ -7,7 +7,8 @@
  * @version 3.0
  */
 
-use Core\Config;
+use Config\Config;
+
 
 /**
  * The Application configuration.
@@ -78,6 +79,7 @@ Config::set('app', array(
         'Cache\CacheServiceProvider',
         'Routing\RoutingServiceProvider',
         'Cookie\CookieServiceProvider',
+        'Module\ModuleServiceProvider',
         'Database\DatabaseServiceProvider',
         'Encryption\EncryptionServiceProvider',
         'Filesystem\FilesystemServiceProvider',
@@ -85,11 +87,14 @@ Config::set('app', array(
         'Log\LogServiceProvider',
         'Mail\MailServiceProvider',
         'Pagination\PaginationServiceProvider',
+        'Redis\RedisServiceProvider',
         'Auth\Reminders\ReminderServiceProvider',
         'Session\SessionServiceProvider',
+        'Language\LanguageServiceProvider',
         'Validation\ValidationServiceProvider',
-        'Template\TemplateServiceProvider',
+        'Html\HtmlServiceProvider',
         'View\ViewServiceProvider',
+        'Template\TemplateServiceProvider',
         'Cron\CronServiceProvider',
     ),
 
@@ -102,22 +107,12 @@ Config::set('app', array(
      * The registered Class Aliases.
      */
     'aliases' => array(
-        // The Core.
-        'Errors'        => 'Core\Error',
-        'View'          => 'Core\View',
-
         // The Helpers.
-        'Mail'          => 'Helpers\Mailer',
         'Assets'        => 'Helpers\Assets',
-        'Csrf'          => 'Helpers\Csrf',
         'Date'          => 'Helpers\Date',
         'Document'      => 'Helpers\Document',
-        'Encrypter'     => 'Helpers\Encrypter',
-        'FastCache'     => 'Helpers\FastCache',
-        'Form'          => 'Helpers\Form',
         'Ftp'           => 'Helpers\Ftp',
         'GeoCode'       => 'Helpers\GeoCode',
-        'Hooks'         => 'Helpers\Hooks',
         'Inflector'     => 'Helpers\Inflector',
         'Number'        => 'Helpers\Number',
         'RainCaptcha'   => 'Helpers\RainCaptcha',
@@ -132,7 +127,7 @@ Config::set('app', array(
         'Menu'          => '\App\Helpers\Menu',
 
         // The Forensics Console.
-        'Console'       => '\Forensics\Console',
+        'Console'       => 'Forensics\Console',
 
         // The Support Classes.
         'Arr'           => 'Support\Arr',
@@ -155,15 +150,19 @@ Config::set('app', array(
         'Paginator'     => 'Support\Facades\Paginator',
         'Password'      => 'Support\Facades\Password',
         'Redirect'      => 'Support\Facades\Redirect',
+        'Redis'         => 'Support\Facades\Redis',
         'Request'       => 'Support\Facades\Request',
         'Response'      => 'Support\Facades\Response',
         'Route'         => 'Support\Facades\Route',
-        'Router'        => 'Support\Facades\Router',
         'Session'       => 'Support\Facades\Session',
         'Validator'     => 'Support\Facades\Validator',
         'Log'           => 'Support\Facades\Log',
         'URL'           => 'Support\Facades\URL',
+        'Form'          => 'Support\Facades\Form',
+        'HTML'          => 'Support\Facades\HTML',
         'Template'      => 'Support\Facades\Template',
+        'View'          => 'Support\Facades\View',
         'Cron'          => 'Support\Facades\Cron',
+        'Module'        => 'Support\Facades\Module',
     ),
 ));

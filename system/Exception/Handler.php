@@ -1,24 +1,17 @@
 <?php
-/**
- * Handler - Implements a simple Exception Handler.
- *
- * @author Virgil-Adrian Teaca - virgil@giulianaeassociati.com
- * @version 3.0
- */
 
 namespace Exception;
 
 use Exception\PlainDisplayer;
 use Exception\WhoopsDisplayer;
 use Exception\ExceptionDisplayerInterface;
-use Exception\RedirectToException;
+
 use Support\Contracts\ResponsePreparerInterface;
+use Support\Facades\Redirect;
 
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Debug\Exception\FatalErrorException as FatalError;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
-
-use Redirect;
 
 use Closure;
 use Exception;
@@ -36,21 +29,21 @@ class Handler
     protected $responsePreparer;
 
     /**
-     * The exception displayer implementation.
+     * The plain exception displayer.
      *
      * @var \Exception\ExceptionDisplayerInterface
      */
     protected $plainDisplayer;
 
     /**
-     * The exception displayer implementation.
+     * The debug exception displayer.
      *
      * @var \Exception\ExceptionDisplayerInterface
      */
     protected $debugDisplayer;
 
     /**
-     * Indicates if the Application is in Debug Mode.
+     * Indicates if the application is in debug mode.
      *
      * @var bool
      */
@@ -71,16 +64,18 @@ class Handler
     protected $handled = array();
 
     /**
-     * Create a new Error Handler instance.
+     * Create a new error handler instance.
      *
+     * @param  \Support\Contracts\ResponsePreparerInterface  $responsePreparer
+     * @param  \Exception\ExceptionDisplayerInterface  $plainDisplayer
+     * @param  \Exception\ExceptionDisplayerInterface  $debugDisplayer
      * @param  bool  $debug
      * @return void
      */
-    public function __construct(
-        ResponsePreparerInterface $responsePreparer,
-        ExceptionDisplayerInterface $plainDisplayer,
-        ExceptionDisplayerInterface $debugDisplayer,
-        $debug = true)
+    public function __construct(ResponsePreparerInterface $responsePreparer,
+                                ExceptionDisplayerInterface $plainDisplayer,
+                                ExceptionDisplayerInterface $debugDisplayer,
+                                $debug = true)
     {
         $this->debug = $debug;
 
@@ -91,8 +86,9 @@ class Handler
     }
 
     /**
-     * Register the exception / error handlers.
+     * Register the exception / error handlers for the application.
      *
+     * @param  string  $environment
      * @return void
      */
     public function register($environment)
@@ -160,16 +156,7 @@ class Handler
      */
     public function handleException($exception)
     {
-        if ($exception instanceof RedirectToException) {
-            // Manage the Redirect comming from the Helpers\Url.
-            $url = $exception->getUrl();
-
-            if (is_null($url)) {
-                return Redirect::back($exception->getStatusCode());
-            } else {
-                return Redirect::to($url, $exception->getStatusCode());
-            }
-        } else if (! $exception instanceof Exception) {
+        if (! $exception instanceof Exception) {
             $exception = new FatalThrowableError($exception);
         }
 
@@ -223,16 +210,14 @@ class Handler
     }
 
     /**
-     * Display the given exception to the user.
+     * Handle a console exception.
      *
      * @param  \Exception  $exception
      * @return void
      */
-    protected function displayException($exception)
+    public function handleConsole($exception)
     {
-        $displayer = $this->debug ? $this->debugDisplayer : $this->plainDisplayer;
-
-        return $displayer->display($exception);
+        return $this->callCustomHandlers($exception, true);
     }
 
     /**
@@ -253,9 +238,14 @@ class Handler
                 $code = 500;
             }
 
+            // We will wrap this handler in a try / catch and avoid white screens of death
+            // if any exceptions are thrown from a handler itself. This way we will get
+            // at least some errors, and avoid errors with no data or not log writes.
             try {
                 $response = $handler($exception, $code, $fromConsole);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e)
+            {
                 $response = $this->formatException($e);
             }
 
@@ -266,9 +256,22 @@ class Handler
     }
 
     /**
+     * Display the given exception to the user.
+     *
+     * @param  \Exception  $exception
+     * @return void
+     */
+    protected function displayException($exception)
+    {
+        $displayer = $this->debug ? $this->debugDisplayer : $this->plainDisplayer;
+
+        return $displayer->display($exception);
+    }
+
+    /**
      * Determine if the given handler handles this exception.
      *
-     * @param  Closure    $handler
+     * @param  \Closure    $handler
      * @param  \Exception  $exception
      * @return bool
      */
@@ -276,13 +279,13 @@ class Handler
     {
         $reflection = new ReflectionFunction($handler);
 
-        return (($reflection->getNumberOfParameters() == 0) || $this->hints($reflection, $exception));
+        return $reflection->getNumberOfParameters() == 0 || $this->hints($reflection, $exception);
     }
 
     /**
      * Determine if the given handler type hints the exception.
      *
-     * @param  ReflectionFunction  $reflection
+     * @param  \ReflectionFunction  $reflection
      * @param  \Exception  $exception
      * @return bool
      */
@@ -292,7 +295,7 @@ class Handler
 
         $expected = $parameters[0];
 
-        return (! $expected->getClass() || $expected->getClass()->isInstance($exception));
+        return ! $expected->getClass() || $expected->getClass()->isInstance($exception);
     }
 
     /**
@@ -304,7 +307,7 @@ class Handler
     protected function formatException(\Exception $e)
     {
         if ($this->debug) {
-            $location = $e->getMessage().' in '.$e->getFile().':'.$e->getLine();
+            $location = $e->getMessage() .' in '.$e->getFile() .':' .$e->getLine();
 
             return 'Error in exception handler: '.$location;
         }
@@ -315,7 +318,7 @@ class Handler
     /**
      * Register an application error handler.
      *
-     * @param  Closure  $callback
+     * @param  \Closure  $callback
      * @return void
      */
     public function error(Closure $callback)
@@ -326,7 +329,7 @@ class Handler
     /**
      * Register an application error handler at the bottom of the stack.
      *
-     * @param  Closure  $callback
+     * @param  \Closure  $callback
      * @return void
      */
     public function pushError(Closure $callback)
@@ -338,7 +341,7 @@ class Handler
      * Prepare the given response.
      *
      * @param  mixed  $response
-     * @return \Illuminate\Http\Response
+     * @return \Http\Response
      */
     protected function prepareResponse($response)
     {
@@ -356,16 +359,6 @@ class Handler
     }
 
     /**
-     * Check if is an AJAX request.
-     *
-     * @return bool
-     */
-    protected function isAjaxRequest()
-    {
-        return (! empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
-    }
-
-    /**
      * Set the debug level for the handler.
      *
      * @param  bool  $debug
@@ -375,4 +368,5 @@ class Handler
     {
         $this->debug = $debug;
     }
+
 }
