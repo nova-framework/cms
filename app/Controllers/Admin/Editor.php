@@ -1,9 +1,9 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 
-class Editor extends Controller
+class Editor extends BackendController
 {
 	public function index()
 	{

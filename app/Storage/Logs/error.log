@@ -25,3 +25,240 @@ Stack trace:
 #21 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
 #22 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
 #23 {main} [] []
+[2016-10-15 22:51:28] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 22:53:59] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:12:56] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:22:33] production.ERROR: exception 'ReflectionException' with message 'Class App\Controllers\Welcome does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('App\\Controllers...')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('App\\Controllers...', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('App\\Controllers...', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('App\\Controllers...')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('App\\Controllers...')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'App\\Controllers...', 'index')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:24:07] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:24:15] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:26:00] production.ERROR: exception 'ReflectionException' with message 'Class \App\mModules\Blog\Controllers\Blog does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('\\App\\mModules\\B...')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('\\App\\mModules\\B...', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('\\App\\mModules\\B...', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('\\App\\mModules\\B...')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('\\App\\mModules\\B...')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), '\\App\\mModules\\B...', 'index')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:26:23] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:28:29] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:29:51] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:31:31] production.ERROR: exception 'ReflectionException' with message 'Class Admin does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('Admin')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('Admin', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('Admin', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('Admin')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('Admin')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'Admin', 'update')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:31:49] production.ERROR: exception 'ReflectionException' with message 'Class Blog does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('Blog')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('Blog', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('Blog', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('Blog')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('Blog')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'Blog', 'index')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:32:17] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:49:25] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:52:25] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-15 23:54:39] production.ERROR: exception 'ReflectionException' with message 'Class App\Modules\Demo\Controllers\Demos does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('App\\Modules\\Dem...')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('App\\Modules\\Dem...', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('App\\Modules\\Dem...', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('App\\Modules\\Dem...')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('App\\Modules\\Dem...')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'App\\Modules\\Dem...', 'events')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:57:49] production.ERROR: exception 'ReflectionException' with message 'Class App\Modules\Demos\Controllers\Demos does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('App\\Modules\\Dem...')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('App\\Modules\\Dem...', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('App\\Modules\\Dem...', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('App\\Modules\\Dem...')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('App\\Modules\\Dem...')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'App\\Modules\\Dem...', 'events')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-15 23:59:18] production.ERROR: exception 'ReflectionException' with message 'Class App\Modules\Demos\Controllers\Demos does not exist' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php:507
+Stack trace:
+#0 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(507): ReflectionClass->__construct('App\\Modules\\Dem...')
+#1 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Container/Container.php(431): Container\Container->build('App\\Modules\\Dem...', Array)
+#2 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(443): Container\Container->make('App\\Modules\\Dem...', Array)
+#3 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(76): Foundation\Application->make('App\\Modules\\Dem...')
+#4 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php(52): Routing\ControllerDispatcher->makeController('App\\Modules\\Dem...')
+#5 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(958): Routing\ControllerDispatcher->dispatch(Object(Routing\Route), Object(Http\Request), 'App\\Modules\\Dem...', 'events')
+#6 [internal function]: Routing\Router->Routing\{closure}()
+#7 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Route.php(128): call_user_func_array(Object(Closure), Array)
+#8 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(1026): Routing\Route->run()
+#9 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/Router.php(994): Routing\Router->dispatchToRoute(Object(Http\Request))
+#10 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(744): Routing\Router->dispatch(Object(Http\Request))
+#11 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(717): Foundation\Application->dispatch(Object(Http\Request))
+#12 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/shared/Http/ContentGuard.php(62): Foundation\Application->handle(Object(Http\Request), 1, true)
+#13 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Session/Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Http\Request), 1, true)
+#14 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Queue.php(49): Session\Middleware->handle(Object(Http\Request), 1, true)
+#15 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Cookie/Guard.php(54): Cookie\Queue->handle(Object(Http\Request), 1, true)
+#16 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/vendor/stack/builder/src/Stack/StackedHttpKernel.php(23): Cookie\Guard->handle(Object(Http\Request), 1, true)
+#17 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Foundation/Application.php(615): Stack\StackedHttpKernel->handle(Object(Http\Request))
+#18 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Boot/Start.php(244): Foundation\Application->run()
+#19 /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/public/index.php(37): require('/Users/davidcar...')
+#20 {main} [] []
+[2016-10-16 00:06:21] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:08:28] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:19:00] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:19:26] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:19:49] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:19:59] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 00:20:15] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined method App\Modules\Blog\Controllers\Blog::getAfterFilters()' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/system/Routing/ControllerDispatcher.php:125
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []
+[2016-10-16 08:47:33] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Class 'App\Controllers\Admin\CBackendController' not found' in /Users/davidcarr/Desktop/Desktop - David’s MacBook Pro/novacms/app/Controllers/Admin/Authorize.php:27
+Stack trace:
+#0 [internal function]: Exception\Handler->handleShutdown()
+#1 {main} [] []

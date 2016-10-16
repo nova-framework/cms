@@ -1,12 +1,12 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 use DB;
 use Input;
 use Redirect;
 
-class GlobalBlocks extends Controller
+class GlobalBlocks extends BackendController
 {
 	public function index()
 	{

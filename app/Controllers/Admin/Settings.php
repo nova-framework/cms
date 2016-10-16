@@ -13,7 +13,7 @@ use Helpers\FastCache;
 use Helpers\Url;
 use Helpers\Csrf;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 use App\Helpers\RoleVerifier as Authorize;
 
 use Auth;
@@ -25,28 +25,14 @@ use Request;
 use Validator;
 
 
-class Settings extends Controller
+class Settings extends BackendController
 {
-    protected $template = 'AdminLte';
-    protected $layout   = 'backend';
-
-
     public function __construct()
     {
         parent::__construct();
-    }
 
-    protected function before()
-    {
-        // Check the User Authorization.
-        if (! Auth::user()->hasRole('administrator')) {
-            $status = __d('settings', 'You are not authorized to access this resource.');
-
-            return Redirect::to('admin/dashboard')->withStatus($status, 'warning');
-        }
-
-        // Leave to parent's method the Execution Flow decisions.
-        return parent::before();
+        //restrict access to admin users only
+        $this->beforeFilter('@adminUsersFilter');
     }
 
     protected function validate(array $data)

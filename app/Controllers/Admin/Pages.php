@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 use App\Models\Page;
 use App\Models\Sidebar;
 use Auth;
@@ -13,7 +13,7 @@ use Validator;
 use Helpers\Document;
 use Str;
 
-class Pages extends Controller
+class Pages extends BackendController
 {
 	public function index()
 	{

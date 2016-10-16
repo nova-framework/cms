@@ -11,7 +11,7 @@ namespace App\Controllers\Admin;
 use View;
 use Helpers\ReCaptcha;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 use App\Models\Role;
 use App\Models\User;
 use App\Helpers\RoleVerifier as Authorize;
@@ -26,27 +26,8 @@ use Session;
 use Validator;
 
 
-class Users extends Controller
+class Users extends BackendController
 {
-    protected function before()
-    {
-        // Check the User Authorization - while using the Extended Auth Driver.
-        switch ($this->getMethod()) {
-            case 'profile':
-            case 'postProfile':
-                break;
-
-            default:
-                if (! Auth::user()->hasRole('administrator')) {
-                    $status = __('You are not authorized to access this resource.');
-
-                    return Redirect::to('admin/dashboard')->withStatus($status, 'warning');
-                }
-        }
-
-        // Leave to parent's method the Execution Flow decisions.
-        return parent::before();
-    }
 
     protected function validate(array $data, $id = null)
     {

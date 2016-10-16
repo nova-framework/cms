@@ -28,14 +28,14 @@ abstract class Controller extends BaseController
      *
      * @var string
      */
-    protected $template = 'AdminLte';
+    protected $template = 'Default';
 
     /**
      * The currently used Layout.
      *
      * @var string
      */
-    protected $layout = 'backend';
+    protected $layout = 'default';
 
 
     /**

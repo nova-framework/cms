@@ -8,14 +8,10 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 
-class Dashboard extends Controller
+class Dashboard extends BackendController
 {
-    protected $template = 'AdminLte';
-    protected $layout   = 'backend';
-
-
     public function __construct()
     {
         parent::__construct();

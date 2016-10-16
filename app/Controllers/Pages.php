@@ -9,9 +9,6 @@ use App\Models\Sidebar;
 
 class Pages extends Controller
 {
-	protected $template = 'Default';
-	protected $layout = 'default';
-
 	public function fetch()
 	{
         $request = Request::path();

@@ -12,7 +12,7 @@ use Core\View;
 use Helpers\Url;
 use Helpers\ReCaptcha;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 
 use Auth;
 use Hash;
@@ -23,7 +23,7 @@ use Response;
 use Session;
 
 
-class Authorize extends Controller
+class Authorize extends BackendController
 {
     protected $layout = 'default';
 

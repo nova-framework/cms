@@ -1,14 +1,14 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Core\BackendController;
 use App\Models\Sidebar;
 use Config;
 use Input;
 use Redirect;
 use Validator;
 
-class Sidebars extends Controller
+class Sidebars extends BackendController
 {
 	public function index()
 	{
