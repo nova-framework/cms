@@ -8,23 +8,17 @@
 
 namespace App\Controllers\Admin;
 
-use View;
-use Helpers\ReCaptcha;
-
 use App\Core\BackendController;
 use App\Models\Role;
 use App\Models\User;
-use App\Helpers\RoleVerifier as Authorize;
-
 use Carbon\Carbon;
-
 use Auth;
 use Hash;
 use Input;
 use Redirect;
 use Session;
 use Validator;
-
+use View;
 
 class Users extends BackendController
 {
