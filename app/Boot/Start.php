@@ -18,7 +18,6 @@ use Nova\Config\Repository as ConfigRepository;
 use Nova\Foundation\AliasLoader;
 use Nova\Foundation\Application;
 use Nova\Http\Request;
-use Nova\Http\RequestProcessor;
 use Nova\Support\Facades\Facade;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -48,6 +47,12 @@ if (function_exists('mb_internal_encoding')) {
 //--------------------------------------------------------------------------
 
 Patchwork\Utf8\Bootup::initMbstring();
+
+//--------------------------------------------------------------------------
+// Set The System Path
+//--------------------------------------------------------------------------
+
+define('SYSTEMDIR', ROOTDIR .str_replace('/', DS, 'vendor/nova-framework/system/'));
 
 //--------------------------------------------------------------------------
 // Set The Storage Path
@@ -124,7 +129,7 @@ if ($env != 'testing') ini_set('display_errors', 'Off');
 // Load The Configuration
 //--------------------------------------------------------------------------
 
-foreach (glob(app_path() .DS .'Config/*.php') as $path) {
+foreach (glob($app['path'] .DS .'Config' .DS .'*.php') as $path) {
     if (is_readable($path)) require $path;
 }
 
@@ -191,7 +196,7 @@ $app->booted(function() use ($app, $env)
 // Load The Application Start Script
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Boot' .DS .'Global.php';
+$path = $app['path'] .DS .'Boot' .DS .'Global.php';
 
 if (is_readable($path)) require $path;
 
@@ -199,7 +204,7 @@ if (is_readable($path)) require $path;
 // Load The Environment Start Script
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Boot' .DS .'Environment' .DS .ucfirst($env) .'.php';
+$path = $app['path'] .DS .'Boot' .DS .'Environment' .DS .ucfirst($env) .'.php';
 
 if (is_readable($path)) require $path;
 
@@ -207,7 +212,7 @@ if (is_readable($path)) require $path;
 // Load The Application Events
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Events.php';
+$path = $app['path'] .DS .'Events.php';
 
 if (is_readable($path)) require $path;
 
@@ -215,7 +220,7 @@ if (is_readable($path)) require $path;
 // Load The Application's Route Filters
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Filters.php';
+$path = $app['path'] .DS .'Filters.php';
 
 if (is_readable($path)) require $path;
 
@@ -223,7 +228,7 @@ if (is_readable($path)) require $path;
 // Load The Application Routes
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Routes.php';
+$path = $app['path'] .DS .'Routes.php';
 
 if (is_readable($path)) require $path;
 
@@ -231,14 +236,14 @@ if (is_readable($path)) require $path;
 // Load The Application Bootstrap
 //--------------------------------------------------------------------------
 
-$path = app_path() .DS .'Bootstrap.php';
+$path = $app['path'] .DS .'Bootstrap.php';
 
 if (is_readable($path)) require $path;
 
 });
 
 //--------------------------------------------------------------------------
-// Execute The Application
+// Return The Application
 //--------------------------------------------------------------------------
 
-$app->run();
+return $app;

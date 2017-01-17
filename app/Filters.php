@@ -55,7 +55,7 @@ Route::filter('referer', function($route, $request) {
     // Check if the visitor come to this Route from another site.
     $referer = $request->header('referer');
 
-    if(! str_starts_with($referer, Config::get('app.url'))) {
+    if(! starts_with($referer, Config::get('app.url'))) {
         // When Referrer is invalid, respond with Error 400 (Bad Request)
         App::abort(400, 'Bad Request');
     }
@@ -69,7 +69,7 @@ Route::filter('auth', function($route, $request) {
 
     // User is not authenticated.
     else if (! $request->ajax()) {
-         return Redirect::guest('login');
+        return Redirect::guest('login');
     } else {
         return Response::make('Unauthorized Access', 403);
     }
@@ -87,21 +87,9 @@ Route::filter('guest', function($route, $request) {
 
     // User is authenticated.
     else if (! $request->ajax()) {
-         return Redirect::guest('admin/dashboard');
+        return Redirect::to('admin/dashboard');
     } else {
         return Response::make('Unauthorized Access', 403);
     }
 });
 
-// Role-based Authorization Filter.
-Route::filter('roles', function($route, $request, $response, $roles = null) {
-    if (! is_null($roles) && Auth::check()) {
-        $user = Auth::user();
-
-        if (! $user->hasRole($roles)) {
-            $status = __('You are not authorized to access this resource.');
-
-            return Redirect::to('admin/dashboard')->withStatus($status, 'warning');
-        }
-    }
-});

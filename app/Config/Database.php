@@ -30,7 +30,7 @@ Config::set('database', array(
         'mysql' => array(
             'driver'    => 'mysql',
             'hostname'  => 'localhost',
-            'database'  => 'novacms',
+            'database'  => 'nova',
             'username'  => 'root',
             'password'  => 'root',
             'prefix'    => PREFIX,

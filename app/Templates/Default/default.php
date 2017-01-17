@@ -1,13 +1,5 @@
-<?php
-/**
- * Default Layout - a Layout similar with the classic Header and Footer files.
- */
-
-// Generate the Language Changer menu.
-$language = Language::code();
-?>
 <!DOCTYPE html>
-<html lang="<?= $language; ?>">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title><?= isset($browserTitle) ? $browserTitle : $title;?> | <?= Config::get('app.name'); ?></title>
@@ -24,7 +16,7 @@ Assets::css([
 echo isset($css) ? $css : ''; // Place to pass data / plugable hook zone
 ?>
 </head>
-<body style='padding-top: 28px;'>
+<body>
 
 <?= isset($afterBody) ? $afterBody : ''; // Place to pass data / plugable hook zone ?>
 
@@ -39,6 +31,7 @@ echo isset($css) ? $css : ''; // Place to pass data / plugable hook zone
         <div class='col-md-2 pull-right'>
             <?=GlobalBlocks::get('Phone Number', 'input');?>
         </div>
+
     </div>
 
 </div>
@@ -106,7 +99,7 @@ echo isset($css) ? $css : ''; // Place to pass data / plugable hook zone
     <div class="container-fluid">
         <div class="row" style="margin: 15px 0 0;">
             <div class="col-lg-4">
-                <p class="text-muted">Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= VERSION; ?></b></a>
+                <p class="text-muted">Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= $version; ?> / Kernel <?= VERSION; ?></b></a>
 
                 <?=GlobalBlocks::get('Footer', 'input');?>
                 </p>

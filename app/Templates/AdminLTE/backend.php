@@ -6,15 +6,18 @@
 // Prepare the current User Info.
 $user = Auth::user();
 
-// Generate the Language Changer menu.
-$langCode = Language::code();
+if (isset($user->image)) {
+    $imageUrl = resource_url('images/users/' .basename($user->image->path));
+} else {
+    $imageUrl = vendor_url('dist/img/avatar5.png', 'almasaeed2010/adminlte');
+}
 ?>
 <!DOCTYPE html>
-<html lang="<?= $langCode; ?>">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?= $title; ?> | <?= Config::get('app.name'); ?></title>
+    <title><?= $title; ?> | <?= Config::get('app.name', SITETITLE); ?></title>
     <?= isset($meta) ? $meta : ''; // Place to pass data / plugable hook zone ?>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -98,14 +101,14 @@ $langCode = Language::code();
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <!-- The user image in the navbar-->
-              <img src="<?= vendor_url('dist/img/avatar5.png', 'almasaeed2010/adminlte'); ?>" class="user-image" alt="User Image">
+              <img src="<?= $imageUrl ?>" class="user-image" alt="User Image">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
               <span class="hidden-xs"><?= $user->username; ?></span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
               <li class="user-header">
-                <img src="<?= vendor_url('dist/img/avatar5.png', 'almasaeed2010/adminlte'); ?>" class="img-circle" alt="User Image">
+                <img src="<?= $imageUrl ?>" class="img-circle" alt="User Image">
 
                 <p>
                   <?= $user->realname; ?> - <?= $user->role->name; ?>
@@ -146,24 +149,16 @@ $langCode = Language::code();
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
             <li class="header"><?= __d('adminlte', 'ADMINISTRATION'); ?></li>
-            <li <?php if ($baseUri == 'admin/dashboard') { echo "class='active'"; } ?>>
-                <a href="<?= site_url('admin/dashboard'); ?>"><i class="fa fa-dashboard"></i> <span><?= __d('adminlte', 'Dashboard'); ?></span></a>
-            </li>
-
-            <?php if ($user->hasRole('administrator')) { ?>
-
-            <?php
-            if ($eventModuleLinks) {
-                // There you can add the $items to View.
-                foreach ($eventModuleLinks as $module) {
-                    echo $module;
-                }
-            }
-            ?>
 
             <li <?php if ($baseUri == 'admin/pages') { echo "class='active'"; } ?>>
                 <a href="<?= site_url('admin/pages'); ?>"><i class="fa fa-book"></i> <span><?= __d('admin_lte', 'Pages'); ?></span></a>
             </li>
+
+            <?php foreach ($menuItems as $item) { ?>
+            <li <?php if ($baseUri == $item['uri']) { echo "class='active'"; } ?>>
+                <a href="<?= site_url($item['uri']); ?>"><i class="fa fa-<?= $item['icon'] ?>"></i> <span><?= $item['title']; ?></span></a>
+            </li>
+            <?php } ?>
 
             <li <?php if ($baseUri == 'admin/globalblocks') { echo "class='active'"; } ?>>
                 <a href="<?= site_url('admin/globalblocks'); ?>"><i class="fa fa-cubes"></i> <span><?= __d('admin_lte', 'Global Blocks'); ?></span></a>
@@ -187,8 +182,6 @@ $langCode = Language::code();
             <li <?php if ($baseUri == 'admin/roles') { echo "class='active'"; } ?>>
                 <a href="<?= site_url('admin/roles'); ?>"><i class="fa fa-book"></i> <span><?= __d('admin_lte', 'Roles'); ?></span></a>
             </li>
-
-            <?php } ?>
         </ul>
         <!-- /.sidebar-menu -->
     </section>
@@ -210,7 +203,7 @@ $langCode = Language::code();
       <?php } ?>
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= VERSION; ?></b></a> - </strong> All rights reserved.
+    <strong>Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= $version; ?> / Kernel <?= VERSION; ?></b></a> - </strong> All rights reserved.
   </footer>
 
 </div>

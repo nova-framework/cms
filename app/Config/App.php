@@ -22,7 +22,7 @@ Config::set('app', array(
     /**
      * The Website URL.
      */
-    'url' => 'http://novacms:8888/',
+    'url' => 'http://novacms.dev/',
 
     /**
     * The Administrator's E-mail Address.
@@ -62,9 +62,9 @@ Config::set('app', array(
 
     /**
      * The Encryption Key.
-     * This tool can be used to generate key - http://jeffreybarke.net/tools/codeigniter-encryption-key-generator
+     * This page can be used to generate key - http://novaframework.com/token-generator
      */
-    'key' => 'NAiiTMu3bjmSwGuGjrWYjFZer8Bb7Gza',
+    'key' => 'd9HX26CfX4x8MkW2GOBPRrZgLHdCx0LR',
 
     /**
      *  Prevents the website from CSRF attacks.
@@ -94,7 +94,7 @@ Config::set('app', array(
         'Nova\Validation\ValidationServiceProvider',
         'Nova\Html\HtmlServiceProvider',
         'Nova\View\ViewServiceProvider',
-        'Nova\Template\TemplateServiceProvider',
+        'Nova\Layout\LayoutServiceProvider',
         'Nova\Cron\CronServiceProvider',
     ),
 
@@ -160,7 +160,7 @@ Config::set('app', array(
         'URL'           => 'Nova\Support\Facades\URL',
         'Form'          => 'Nova\Support\Facades\Form',
         'HTML'          => 'Nova\Support\Facades\HTML',
-        'Template'      => 'Nova\Support\Facades\Template',
+        'Layout'        => 'Nova\Support\Facades\Layout',
         'View'          => 'Nova\Support\Facades\View',
         'Cron'          => 'Nova\Support\Facades\Cron',
         'Module'        => 'Nova\Support\Facades\Module',

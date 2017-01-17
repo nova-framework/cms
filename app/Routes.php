@@ -35,7 +35,7 @@ Route::post('password/remind', array(
 ));
 
 // The Password Reset.
-Route::get('password/reset(/{token})', array(
+Route::get('password/reset/{token}', array(
     'before' => 'guest',
     'uses' => 'App\Controllers\Admin\Authorize@reset'
 ));

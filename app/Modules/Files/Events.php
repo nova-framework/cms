@@ -1,7 +1,27 @@
 <?php
-Event::listen('modules', function($baseUri){
+/**
+ * Events - all Module's specific Events are defined here.
+ *
+ * @author Virgil-Adrian Teaca - virgil@giulianaeassociati.com
+ * @version 3.0
+ */
 
-	$activate = ($baseUri == 'admin/files') ? "class='active'" : null;
-	
-	return '<li '.$activate.'><a href="'.site_url('admin/files').'"><i class="fa fa-file"></i> <span>Files</span></a></li>';
+
+/** Define Events. */
+
+Event::listen('backend.menu', function($user) {
+    if ($user->hasRole('administrator')) {
+        $items = array(
+            array(
+                'uri'    => 'admin/files',
+                'title'  => __d('files', 'Files'),
+                'icon'   => 'file',
+                'weight' => 3,
+            ),
+        );
+    } else {
+        $items = array();
+    }
+
+    return $items;
 });

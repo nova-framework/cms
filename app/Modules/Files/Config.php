@@ -6,7 +6,7 @@
  * @version 3.0
  */
 
-//use Config\Config;
+use Nova\Config\Config;
 
 /**
  * Configuration constants and options.
@@ -21,7 +21,7 @@ Config::set('elFinder', array(
             'alias'         => 'Site Assets',
             'driver'        => 'LocalFileSystem',
             'path'          => ROOTDIR .'assets/',
-            'URL'           => 'assets/',
+            'URL'           => site_url('assets/'),
             'mimeDetect'    => 'internal',
             'tmbPath'       => APPDIR .'Storage/Files/thumbnails',
             'quarantine'    => APPDIR .'Storage/Files/quarantine',
@@ -50,7 +50,7 @@ Config::set('elFinder', array(
             'acceptedName'  => '/^[^\.].*$/',
             'accessControl' => 'access',
             'dateFormat'    => 'j M Y H:i',
-            'defaults'      => array('read' => false, 'write' => false),
+            'defaults'      => array('read' => true, 'write' => false),
             'icon'          => site_url('modules/files/assets/img/volume_icon_local.png'),
         )
     )

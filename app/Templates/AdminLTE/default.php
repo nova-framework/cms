@@ -1,29 +1,5 @@
-<?php
-/**
- * Frontend Default Layout
- */
-
-// Generate the Language Changer menu.
-$langCode = Language::code();
-$langName = Language::name();
-
-$languages = Config::get('languages');
-
-//
-ob_start();
-
-foreach ($languages as $code => $info) {
-?>
-<li class="header <?php if ($code == $langCode) { echo 'active'; } ?>">
-    <a href='<?= site_url('language/' .$code); ?>' title='<?= $info['info']; ?>'><?= $info['name']; ?></a>
-</li>
-<?php
-}
-
-$langMenuLinks = ob_get_clean();
-?>
 <!DOCTYPE html>
-<html lang="<?= $langCode; ?>">
+<html lang="en>">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -79,14 +55,6 @@ $langMenuLinks = ob_get_clean();
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-                <li class="dropdown language-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class='fa fa-language'></i> <?= $langName; ?>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <?= $langMenuLinks; ?>
-                    </ul>
-                </li>
                 <?php if (Auth::check()) { ?>
                 <li <?php if($currentUri == 'profile') echo 'class="active"'; ?>>
                     <a href='<?= site_url('profile'); ?>'><i class='fa fa-user'></i> <?= __d('adminlte', 'Profile'); ?></a>
@@ -132,7 +100,7 @@ $langMenuLinks = ob_get_clean();
       <?php } ?>
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= VERSION; ?></b></a> - </strong> All rights reserved.
+    <strong>Copyright &copy; <?php echo date('Y'); ?> <a href="http://www.novaframework.com/" target="_blank"><b>Nova Framework <?= $version; ?> / Kernel <?= $version; ?></b></a> - </strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->
