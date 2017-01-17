@@ -30,8 +30,10 @@ This framework was designed and is **strongly recommended** to be installed abov
 
 Additionally, installing in a sub-directory, on a production server, will introduce severe security issues. If there is no choice still place the framework files above the document root and have only index.php and .htacess from the public folder in the sub folder and adjust the paths accordingly.
 
-Upload the files above the document root and point your web root to the public folder. Then edit app/Config/Database.php and set your database credentials. Next open app/Config/App.php and update your settings as desired.
-Finally import scripts/cms.sql into your database.
+- Upload the files above the document root and point your web root to the public folder.
+- Edit app/Config/Database.php and set your database credentials.
+- Edit app/Config/App.php and update your settings as desired.
+- Import scripts/cms.sql into your database.
 
 At this point the CMS should be up and running to login to the admin go to /admin with the sample user account:
 
