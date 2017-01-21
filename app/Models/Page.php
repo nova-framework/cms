@@ -2,9 +2,9 @@
 namespace App\Models;
 
 use Nova\Database\ORM\Model;
+use Nova\Database\ORM\SoftDeletingTrait;
 
 class Page extends Model
 {
-	public $timestamps = true;
-	protected $softDelete = true;
+	use SoftDeletingTrait;
 }

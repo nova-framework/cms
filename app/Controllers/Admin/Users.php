@@ -43,6 +43,7 @@ class Users extends BackendController
             'password'              => $required .'|confirmed|strong_password',
             'password_confirmation' => $required .'|same:password',
             'email'                 => 'required|min:5|max:100|email',
+            'image'                 => 'max:1024|mimes:png,jpg,jpeg,gif',
         );
 
         $messages = array(
@@ -57,6 +58,7 @@ class Users extends BackendController
             'password'              => __('Password'),
             'password_confirmation' => __('Password confirmation'),
             'email'                 => __('E-mail'),
+            'image'                 => __d('users', 'Profile Picture'),
         );
 
         // Add the custom Validation Rule commands.
@@ -181,7 +183,7 @@ class Users extends BackendController
         }
 
         // Validate the Input data.
-        $input = Input::only('username', 'role', 'realname', 'password', 'password_confirmation', 'email');
+        $input = Input::only('username', 'role', 'realname', 'password', 'password_confirmation', 'email', 'image');
 
         if(empty($input['password']) && empty($input['password_confirm'])) {
             unset($input['password']);
@@ -202,6 +204,11 @@ class Users extends BackendController
             if(isset($input['password'])) {
                 // Encrypt and add the given Password.
                 $user->password = Hash::make($input['password']);
+            }
+
+            // If a file has been uploaded.
+            if (Input::hasFile('image')) {
+                $user->image = Input::file('image');
             }
 
             // Save the User information - used with the Extended Auth Driver.
@@ -299,7 +306,7 @@ class Users extends BackendController
 
             // Save the User Model instance - used with the Extended Auth Driver.
             $user->save();
-            
+
             // Use a Redirect to avoid the reposting the data.
             $status = __d('users', 'You have successfully updated your Password.');
 

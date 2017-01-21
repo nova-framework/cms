@@ -227,6 +227,7 @@ CREATE TABLE `nova_users` (
   `password` varchar(255) NOT NULL,
   `realname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `image` varchar(255) NOT NULL,
   `active` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `activation_code` varchar(255) DEFAULT NULL,
   `remember_token` varchar(255) DEFAULT NULL,
@@ -238,9 +239,9 @@ CREATE TABLE `nova_users` (
 LOCK TABLES `nova_users` WRITE;
 /*!40000 ALTER TABLE `nova_users` DISABLE KEYS */;
 
-INSERT INTO `nova_users` (`id`, `role_id`, `username`, `password`, `realname`, `email`, `active`, `activation_code`, `remember_token`, `created_at`, `updated_at`)
+INSERT INTO `nova_users` (`id`, `role_id`, `username`, `password`, `realname`, `email`, `image`, `active`, `activation_code`, `remember_token`, `created_at`, `updated_at`)
 VALUES
-	(1,1,'admin','$2y$10$MZpxcVZpwTCCotIkkfPP5O1sDC7GiKzD9klh4MoM/aE44YaVm4Xga','Administrator','admin@novaframework.dev',1,NULL,'YR64tWZqacO7OsQI04IN0kYuLWvcJQfvE6270lxIWzX22JCYlcv7J40Tbhvm','2016-06-03 10:15:00','2016-10-29 09:36:05');
+	(1,1,'admin','$2y$10$MZpxcVZpwTCCotIkkfPP5O1sDC7GiKzD9klh4MoM/aE44YaVm4Xga','Administrator','admin@novaframework.dev',NULL,1,NULL,'YR64tWZqacO7OsQI04IN0kYuLWvcJQfvE6270lxIWzX22JCYlcv7J40Tbhvm','2016-06-03 10:15:00','2016-10-29 09:36:05');
 
 /*!40000 ALTER TABLE `nova_users` ENABLE KEYS */;
 UNLOCK TABLES;

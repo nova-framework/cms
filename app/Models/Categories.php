@@ -2,10 +2,13 @@
 namespace App\Models;
 
 use Nova\Database\ORM\Model;
+use Nova\Database\ORM\SoftDeletingTrait;
 
 class Categories extends Model
 {
-	public function children()
+	use SoftDeletingTrait;
+
+    public function children()
 	{
 	    return $this->hasMany('App\Models\Categories', 'parent_id', 'id');
 	}
