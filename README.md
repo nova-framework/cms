@@ -6,6 +6,10 @@
 [![GitHub stars](https://img.shields.io/github/stars/nova-framework/cms.svg)](https://github.com/nova-framework/cms/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/nova-framework/cms.svg)](https://github.com/nova-framework/cms/network)
 
+## Warning!
+
+This repo has been updated to fall in line with the current stable release of Nova 3.75.12 (at the time of writing this) As a result parts of the code base will be different from the videos. If in doubt please ask in the chat room [gitter.im/nova-framework/framework/novausers](gitter.im/nova-framework/framework/novausers)
+
 ## What is the Nova Framework?
 
 Nova CMS is built on top of Nova Framework, as an example of building a complex application. This is the end result from our video course [https://novaframework.com/screencasts/building-a-cms/getting-started](https://novaframework.com/screencasts/building-a-cms/getting-started)
