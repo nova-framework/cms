@@ -227,7 +227,7 @@ CREATE TABLE `nova_users` (
   `password` varchar(255) NOT NULL,
   `realname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `image` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `active` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `activation_code` varchar(255) DEFAULT NULL,
   `remember_token` varchar(255) DEFAULT NULL,
