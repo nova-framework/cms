@@ -1,1 +1,28 @@
 
+[2017-01-27 08:45:59] production.ERROR: ErrorException: Missing argument 2 for vendor_url(), called in D:\xampp\htdocs\gitlab\cms\app\Templates\AdminLTE\backend.php on line 223 and defined in D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\scripts\helpers.php:88
+Stack trace:
+#0 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\scripts\helpers.php(88): Nova\Exception\Handler->handleError(2, 'Missing argumen...', 'D:\\xampp\\htdocs...', 88, Array)
+#1 D:\xampp\htdocs\gitlab\cms\app\Templates\AdminLTE\backend.php(223): vendor_url('texteditor/conf...')
+#2 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\View\Engines\PhpEngine.php(56): include('D:\\xampp\\htdocs...')
+#3 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\View\Engines\PhpEngine.php(31): Nova\View\Engines\PhpEngine->evaluatePath('D:\\xampp\\htdocs...', Array)
+#4 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\View\View.php(96): Nova\View\Engines\PhpEngine->get('D:\\xampp\\htdocs...', Array)
+#5 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\View\View.php(82): Nova\View\View->renderContents()
+#6 D:\xampp\htdocs\gitlab\cms\app\Core\Controller.php(71): Nova\View\View->render()
+#7 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\Controller.php(250): App\Core\Controller->processResponse(Object(Nova\Layout\Layout))
+#8 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\ControllerDispatcher.php(91): Nova\Routing\Controller->callAction('create', Array)
+#9 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\ControllerDispatcher.php(60): Nova\Routing\ControllerDispatcher->call(Object(App\Controllers\Admin\Pages), Object(Nova\Routing\Route), 'create')
+#10 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\Router.php(958): Nova\Routing\ControllerDispatcher->dispatch(Object(Nova\Routing\Route), Object(Nova\Http\Request), 'App\\Controllers...', 'create')
+#11 [internal function]: Nova\Routing\Router->Nova\Routing\{closure}()
+#12 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\Route.php(128): call_user_func_array(Object(Closure), Array)
+#13 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\Router.php(1026): Nova\Routing\Route->run()
+#14 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Routing\Router.php(994): Nova\Routing\Router->dispatchToRoute(Object(Nova\Http\Request))
+#15 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Foundation\Application.php(749): Nova\Routing\Router->dispatch(Object(Nova\Http\Request))
+#16 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Foundation\Application.php(717): Nova\Foundation\Application->dispatch(Object(Nova\Http\Request))
+#17 D:\xampp\htdocs\gitlab\cms\shared\Http\ContentGuard.php(62): Nova\Foundation\Application->handle(Object(Nova\Http\Request), 1, true)
+#18 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Session\Middleware.php(77): Shared\Http\ContentGuard->handle(Object(Nova\Http\Request), 1, true)
+#19 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Cookie\Queue.php(49): Nova\Session\Middleware->handle(Object(Nova\Http\Request), 1, true)
+#20 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Cookie\Guard.php(54): Nova\Cookie\Queue->handle(Object(Nova\Http\Request), 1, true)
+#21 D:\xampp\htdocs\gitlab\cms\vendor\stack\builder\src\Stack\StackedHttpKernel.php(23): Nova\Cookie\Guard->handle(Object(Nova\Http\Request), 1, true)
+#22 D:\xampp\htdocs\gitlab\cms\vendor\nova-framework\system\src\Foundation\Application.php(615): Stack\StackedHttpKernel->handle(Object(Nova\Http\Request))
+#23 D:\xampp\htdocs\gitlab\cms\public\index.php(44): Nova\Foundation\Application->run()
+#24 {main} [] []

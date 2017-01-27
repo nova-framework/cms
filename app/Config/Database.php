@@ -30,9 +30,9 @@ Config::set('database', array(
         'mysql' => array(
             'driver'    => 'mysql',
             'hostname'  => 'localhost',
-            'database'  => 'nova',
+            'database'  => 'nova_cms',
             'username'  => 'root',
-            'password'  => 'root',
+            'password'  => '',
             'prefix'    => PREFIX,
             'charset'   => 'utf8',
             'collation' => 'utf8_general_ci',
