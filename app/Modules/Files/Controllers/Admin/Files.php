@@ -79,6 +79,13 @@ class Files extends BackendController
             ->shares('title', __d('files', 'Files'));
     }
 
+    public function plain()
+    {
+        $this->layout = 'plain';
+        return $this->getView()
+            ->shares('title', __d('plain', 'Plain'));
+    }
+
     public function connector()
     {
         // Disable the auto-rendering on a (Template) Layout.

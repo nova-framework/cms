@@ -12,6 +12,7 @@
 // The Adminstration Routes.
 Route::group(array('prefix' => 'admin', 'namespace' => 'App\Modules\Files\Controllers\Admin'), function() {
     Route::get('files',           array('before' => 'auth', 'uses' => 'Files@index'));
+    Route::get('files/plain',     array('before' => 'auth', 'uses' => 'Files@plain'));
     Route::any('files/connector', array('before' => 'auth', 'uses' => 'Files@connector'));
 
     // Thumbnails Files serving.
