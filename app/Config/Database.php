@@ -32,7 +32,7 @@ Config::set('database', array(
             'hostname'  => 'localhost',
             'database'  => 'nova',
             'username'  => 'root',
-            'password'  => 'root',
+            'password'  => '',
             'prefix'    => PREFIX,
             'charset'   => 'utf8',
             'collation' => 'utf8_general_ci',
