@@ -136,8 +136,8 @@
 		<br>
 
 		<div class="control-group">
-		    <label class="control-label" for='content'> Content</label>
-		    <textarea class="form-control ckeditor" id='content' name="content" rows='10'><?=Input::old('content');?></textarea>
+		    <label class="control-label" for='editor'> Content</label>
+		    <textarea class="form-control" id="editor" name="content" rows='10'><?=Input::old('content');?></textarea>
 		</div>	
 
 		<p><br>
@@ -151,3 +151,15 @@
 
 
 </section>
+
+<!-- REQUIRED JS SCRIPTS -->
+<?php
+Assets::js(array(
+    vendor_url('dist/tinymce.min.js', 'texteditor'),
+    vendor_url('dist/config.js', 'texteditor'),
+));
+
+echo isset($js) ? $js : ''; // Place to pass data / plugable hook zone
+
+echo isset($footer) ? $footer : ''; // Place to pass data / plugable hook zone
+?>

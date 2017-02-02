@@ -62,6 +62,8 @@ Config::set('routing', array(
                 'plugins'
             ),
             'twbs/bootstrap' => 'dist',
+            'texteditor' => 'dist',
+            'filemanager' => 'dist',
         ),
     ),
 ));

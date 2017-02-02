@@ -215,13 +215,12 @@ if (isset($user->image) && $user->image->exists()) {
 Assets::js(array(
     // Bootstrap 3.3.5
     vendor_url('bootstrap/js/bootstrap.min.js', 'almasaeed2010/adminlte'),
-    // AdminLTE App
+     // AdminLTE App
     vendor_url('dist/js/app.min.js', 'almasaeed2010/adminlte'),
     // Select2
     vendor_url('plugins/select2/select2.full.min.js', 'almasaeed2010/adminlte'),
     template_url('nestable/nestable.js', 'AdminLte'),
-    site_url('ckeditor/ckeditor.js')
-));
+ ));
 
 echo isset($js) ? $js : ''; // Place to pass data / plugable hook zone
 
@@ -234,10 +233,7 @@ $(function () {
     $(".select2").select2();
 });
 
-CKEDITOR.editorConfig = function( config ) {
-  config.filebrowserBrowseUrl = '<?=site_url('admin/files/plain');?>';
-  config.baseHref = '<?=site_url();?>';
-};
+ 
 </script>
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.

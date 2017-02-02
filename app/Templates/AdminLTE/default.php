@@ -114,7 +114,7 @@ Assets::js(array(
     vendor_url('dist/js/app.min.js', 'almasaeed2010/adminlte'),
     // iCheck
     vendor_url('plugins/iCheck/icheck.min.js', 'almasaeed2010/adminlte'),
-));
+ ));
 
 echo isset($js) ? $js : ''; // Place to pass data / plugable hook zone
 
