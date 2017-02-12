@@ -7,13 +7,8 @@
  * @version 3.0
  */
 
-use Nova\Config\Config;
 
-
-/**
- * Setup the Database configuration.
- */
-Config::set('database', array(
+return array(
     // The PDO Fetch Style.
     'fetch' => PDO::FETCH_CLASS,
 
@@ -30,7 +25,7 @@ Config::set('database', array(
         'mysql' => array(
             'driver'    => 'mysql',
             'hostname'  => 'localhost',
-            'database'  => 'nova',
+            'database'  => 'novacms',
             'username'  => 'root',
             'password'  => 'root',
             'prefix'    => PREFIX,
@@ -48,4 +43,4 @@ Config::set('database', array(
             'schema'   => 'public',
         ),
     ),
-));
+);
