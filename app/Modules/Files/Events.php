@@ -13,7 +13,7 @@ Event::listen('backend.menu', function($user) {
     if ($user->hasRole('administrator')) {
         $items = array(
             array(
-                'uri'    => 'files',
+                'uri'    => 'admin/files',
                 'title'  => __d('files', 'Files'),
                 'icon'   => 'file',
                 'weight' => 3,
