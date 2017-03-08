@@ -121,6 +121,6 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'Admin'), function() {
     Route::get( 'editor',                array('before' => 'auth',      'uses' => 'Editor@index'));
 });
 
-Route::any('{slug}', 'Pages@fetch')->where('slug', '(.*)');
+//Route::get('{slug}', 'Pages@fetch')->where('slug', '(.*)');
 
 /** End default Routes */

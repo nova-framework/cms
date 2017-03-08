@@ -1,8 +1,7 @@
 <?php
 /**
- * Active Modules
+ * Modules Configuration
  *
- * @author David Carr - dave@daveismyname.com
  * @author Virgil-Adrian Teaca - virgil@giulianaeassociati.com
  * @version 3.0
  */
@@ -22,14 +21,21 @@ return array(
     'namespace' => 'App\Modules\\',
 
     //--------------------------------------------------------------------------
+    // Path to Cache
+    //--------------------------------------------------------------------------
+
+    'cache' => STORAGE_PATH .'modules.php',
+
+    //--------------------------------------------------------------------------
     // Registered Modules
     //--------------------------------------------------------------------------
 
     'modules' => array(
         'files' => array(
-            'namespace' => 'Files',
-            'enabled'   => true,
-            'order'     => 9001,
-        ),
+            'name'     => 'Modules/Files',
+            'basename' => 'Files',
+            'enabled'  => true,
+            'order'    => 9001,
+        )
     ),
 );

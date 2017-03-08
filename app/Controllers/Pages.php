@@ -27,8 +27,8 @@ class Pages extends Controller
 			return View::make('Error/404')->shares('title', 'Page not found!');
 		}
 
-		if (!file_exists(APPDIR.'Templates/'.$this->template.'/'.$page->layout.'.php')){
-			$page->layout = 'default';
+		if (!file_exists(APPDIR.'Templates/'.$this->theme.'/'.$page->layout.'.php')){
+			$page->layout = 'Default';
 		}
 
 		$this->layout = $page->layout;

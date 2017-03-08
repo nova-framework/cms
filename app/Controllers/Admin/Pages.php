@@ -205,8 +205,8 @@ class Pages extends BackendController
 	protected function getLayoutFiles()
 	{
 		$layoutFiles = [];
-		$template = Config::get('app.template');
-		$path = APPDIR.'Templates'.DS.$template.DS;
+		$theme = Config::get('app.theme');
+		$path = APPDIR.'Themes'.DS.$theme.DS.'Layouts'.DS;
 
 		$ignore = ['message'];
 
@@ -218,6 +218,8 @@ class Pages extends BackendController
 				$layoutFiles[] = $file;
 			}
 		}
+
+
 
 		return $layoutFiles;
 	}

@@ -12,12 +12,12 @@ return array(
     /**
      * Debug Mode
      */
-    'debug' => (ENVIRONMENT == 'development'), // When enabled the actual PHP errors will be shown.
+    'debug' => true, // When enabled the actual PHP errors will be shown.
 
     /**
      * The Website URL.
      */
-    'url' => 'http://novacms.dev',
+    'url' => 'http://www.novaframework.dev/',
 
     /**
     * The Administrator's E-mail Address.
@@ -35,9 +35,9 @@ return array(
     'name' => 'Nova CMS',
 
     /**
-     * The default Template.
+     * The default Theme.
      */
-    'template' => 'Default',
+    'theme' => 'Bootstrap',
 
     /**
      * The Backend's Color Scheme.
@@ -59,7 +59,7 @@ return array(
      * The Encryption Key.
      * This page can be used to generate key - http://novaframework.com/token-generator
      */
-    'key' => 'SomeRandomStringThere_1234567890',
+    'key' => 'fheyRnpENQElweLxHe7vfQ0rfGNJQ0zq',
 
     /**
      *  Prevents the website from CSRF attacks.
@@ -89,8 +89,16 @@ return array(
         'Nova\Validation\ValidationServiceProvider',
         'Nova\Html\HtmlServiceProvider',
         'Nova\View\ViewServiceProvider',
-        'Nova\Layout\LayoutServiceProvider',
         'Nova\Cron\CronServiceProvider',
+
+        // The Forge Providers.
+        'Nova\Auth\Reminders\ConsoleServiceProvider',
+        'Nova\Cache\ConsoleServiceProvider',
+        'Nova\Foundation\Providers\ConsoleSupportServiceProvider',
+        'Nova\Foundation\Providers\ForgeServiceProvider',
+        'Nova\Module\Providers\ConsoleServiceProvider',
+        'Nova\Module\Providers\GeneratorServiceProvider',
+        'Nova\Routing\Providers\ConsoleServiceProvider',
 
         // The Application Providers.
         'App\Providers\AppServiceProvider',
@@ -143,6 +151,7 @@ return array(
         'DB'            => 'Nova\Support\Facades\DB',
         'Event'         => 'Nova\Support\Facades\Event',
         'File'          => 'Nova\Support\Facades\File',
+        'Forge'         => 'Nova\Support\Facades\Forge',
         'Hash'          => 'Nova\Support\Facades\Hash',
         'Input'         => 'Nova\Support\Facades\Input',
         'Language'      => 'Nova\Support\Facades\Language',

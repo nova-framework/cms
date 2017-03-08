@@ -22,11 +22,17 @@ return array (
     16 => 'Nova\\Validation\\ValidationServiceProvider',
     17 => 'Nova\\Html\\HtmlServiceProvider',
     18 => 'Nova\\View\\ViewServiceProvider',
-    19 => 'Nova\\Layout\\LayoutServiceProvider',
-    20 => 'Nova\\Cron\\CronServiceProvider',
-    21 => 'App\\Providers\\AppServiceProvider',
-    22 => 'App\\Providers\\EventServiceProvider',
-    23 => 'App\\Providers\\RouteServiceProvider',
+    19 => 'Nova\\Cron\\CronServiceProvider',
+    20 => 'Nova\\Auth\\Reminders\\ConsoleServiceProvider',
+    21 => 'Nova\\Cache\\ConsoleServiceProvider',
+    22 => 'Nova\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+    23 => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    24 => 'Nova\\Module\\Providers\\ConsoleServiceProvider',
+    25 => 'Nova\\Module\\Providers\\GeneratorServiceProvider',
+    26 => 'Nova\\Routing\\Providers\\ConsoleServiceProvider',
+    27 => 'App\\Providers\\AppServiceProvider',
+    28 => 'App\\Providers\\EventServiceProvider',
+    29 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -64,8 +70,25 @@ return array (
     'view' => 'Nova\\View\\ViewServiceProvider',
     'view.finder' => 'Nova\\View\\ViewServiceProvider',
     'view.engine.resolver' => 'Nova\\View\\ViewServiceProvider',
-    'layout' => 'Nova\\Layout\\LayoutServiceProvider',
+    'template' => 'Nova\\View\\ViewServiceProvider',
+    'template.compiler' => 'Nova\\View\\ViewServiceProvider',
     'cron' => 'Nova\\Cron\\CronServiceProvider',
+    'command.auth.reminders.clear' => 'Nova\\Auth\\Reminders\\ConsoleServiceProvider',
+    'command.cache.clear' => 'Nova\\Cache\\ConsoleServiceProvider',
+    'composer' => 'Nova\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+    'forge' => 'Nova\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+    'command.console.make' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.down' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.environment' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.key.generate' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.model.make' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.optimize' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.provider.make' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.route.list' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.serve' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.up' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.view.clear' => 'Nova\\Foundation\\Providers\\ForgeServiceProvider',
+    'command.controller.make' => 'Nova\\Routing\\Providers\\ConsoleServiceProvider',
   ),
   'when' => 
   array (
@@ -105,10 +128,28 @@ return array (
     'Nova\\View\\ViewServiceProvider' => 
     array (
     ),
-    'Nova\\Layout\\LayoutServiceProvider' => 
+    'Nova\\Cron\\CronServiceProvider' => 
     array (
     ),
-    'Nova\\Cron\\CronServiceProvider' => 
+    'Nova\\Auth\\Reminders\\ConsoleServiceProvider' => 
+    array (
+    ),
+    'Nova\\Cache\\ConsoleServiceProvider' => 
+    array (
+    ),
+    'Nova\\Foundation\\Providers\\ConsoleSupportServiceProvider' => 
+    array (
+    ),
+    'Nova\\Foundation\\Providers\\ForgeServiceProvider' => 
+    array (
+    ),
+    'Nova\\Module\\Providers\\ConsoleServiceProvider' => 
+    array (
+    ),
+    'Nova\\Module\\Providers\\GeneratorServiceProvider' => 
+    array (
+    ),
+    'Nova\\Routing\\Providers\\ConsoleServiceProvider' => 
     array (
     ),
   ),

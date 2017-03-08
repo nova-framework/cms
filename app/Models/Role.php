@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Nova\Database\ORM\Model as BaseModel;
 
+
 class Role extends BaseModel
 {
     protected $table = 'roles';
